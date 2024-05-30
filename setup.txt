@@ -1,9 +1,10 @@
+## Initialsing Project
 1. npx create-expo-app QuranAppRN --template blank
 2. cd QuranAppRN
 3. npx expo install react-dom react-native-web @expo/metro-runtime
 4. npx expo start
 
-# git remote rename <old_name> <new_name>
+## git remote rename <old_name> <new_name>
 1. git remote add origin https://github.com/MohammedA-04/QuranApp_ReactNative.git
 
 ## Install Native Wind
