@@ -8,11 +8,11 @@ export default function HomeScreen() {
             <StatusBar style="dark" />
             {/* image placeholder */}
 
-            
+
             <SafeAreaView>
                 <View className="mx-4 relative z-50">
                     <Text>
-                        Hello Quran
+                        Hello Quran App
                     </Text>
                 </View>
             </SafeAreaView>
