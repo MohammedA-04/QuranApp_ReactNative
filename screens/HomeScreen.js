@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { SafeAreaView, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { StatusBar } from "expo-status-bar";
-import { fetchRandomAyah } from "../api/quranAPI"; // Ensure the path is correct
+import { fetchAyahByKey, fetchRandomAyah } from "../api/quranAPI"; // Ensure the path is correct
 import { theme } from '../theme/index'; // Ensure the path is correct
 
 export default function HomeScreen() {
@@ -14,25 +14,29 @@ export default function HomeScreen() {
             setClicked(true);
             setRandomAyah(data.verse);
             console.log(data.verse);
+
+            console.log('hey: ', fetchAyahByKey(randomAyah.verse_key))
+
         } else {
             console.error("Failed to fetch random Ayah.");
         }
     };
 
     return (
-        <View className="flex-1 relative">
+        <View className="flex-1">
             <StatusBar style="dark" />
-            <SafeAreaView>
-                <View className="mx-4 my-4 relative z-50 rounded-lg bg-gray-500 p-4 items-center">
+            <SafeAreaView className="flex-1">
+
+                <View className="items-center p-4 rounded-lg mx-4 my-4 bg-gray-500" >
                     <TouchableOpacity onPress={handleGetRandomAyah}>
-                        <Text className="text-2xl font-semibold text-white">Get Random Ayah</Text>
+                        <Text className="text-2xl text-white font-semibold">Get Random Ayah</Text>
                     </TouchableOpacity>
                 </View>
 
                 {clicked && randomAyah && (
-                    <View className="mx-2 mt-2">
+                    <View className="flex-1" style={{ marginHorizontal: 8 }}>
 
-                        <View className="border-black p-2 items-center rounded-md border-2 mx-2 my-2">
+                        <View className="border-black border-2 items-center p-2 rounded-lg mx-2 my-2">
                             <View className="flex-row m-4">
                                 <Text>Juz: {randomAyah.juz_number} </Text>
                                 <Text>Pg no: {randomAyah.page_number} </Text>
@@ -40,27 +44,20 @@ export default function HomeScreen() {
                             </View>
                         </View>
 
-
-                        <View className=" border-black p-2 items-center rounded-md border-2 mx-2 my-2">
-
+                        <View className="flex-1 border-black p-4 items-center rounded-lg border-2" style={{ marginHorizontal: 8, marginVertical: 8 }}>
                             <ScrollView
-                                vertical
+                                className="flex-1 "
+                                contentContainerStyle={{ flexGrow: 1 }}
                                 indicatorStyle="black"
                                 showsVerticalScrollIndicator={true}
                             >
-                                <Text className="text-3xl mt-1">{randomAyah.text_uthmani}</Text>
+                                <Text className=" text-3xl font-light" style={{ lineHeight: 70 }}>{randomAyah.text_uthmani}</Text>
                                 {/* Optional: Display other formats */}
                                 {/* Display the translation */}
                             </ScrollView>
                         </View>
-
-
-                        {randomAyah.words && randomAyah.words.map(word => (
-                            <Text key={word.id}>{word.translation.text}</Text>
-                        ))}
                     </View>
                 )}
-
             </SafeAreaView>
         </View>
     );

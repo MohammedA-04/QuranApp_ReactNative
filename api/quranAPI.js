@@ -29,8 +29,9 @@ const apiCall = async (url, params = {}) => {
 // Fetch random Ayah with detailed fields
 export const fetchRandomAyah = () => {
     const params = {
-        translations: 'en',
-        fields: 'text_uthmani,text_uthmani_simple,text_imlaei,text_indopak,words'
+        translations: 'english',
+        fields: 'text_uthmani,text_uthmani_simple,text_imlaei,text_indopak,words',
+
     };
     return apiCall(getRandomAyah_EP, params);
 };
@@ -39,8 +40,11 @@ export const fetchRandomAyah = () => {
 export const fetchAyahByKey = (verse_key, additionalParams = {}) => {
     const params = {
         ...additionalParams,
-        fields: 'text_uthmani,text_uthmani_simple,text_imlaei,text_indopak,words'
+        fields: 'text_uthmani,text_uthmani_simple,text_imlaei,text_indopak,words',
+        language: 'english',
+        words: 'true',
     };
+    // e.g., {BASE_URL}/by_key/{verse_key}
     const url = getAyahbyKey_EP(verse_key);
     return apiCall(url, params);
 };
