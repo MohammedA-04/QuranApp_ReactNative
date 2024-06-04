@@ -2,9 +2,12 @@ import axios from 'axios';
 
 // Base URL
 const BASE_URL = 'https://api.quran.com/api/v4/verses';
-const getRandomAyah_EP = `${BASE_URL}/random`;
-const getAyahbyKey_EP = (verse_key) => `${BASE_URL}/by_key/${verse_key}`;
-const getChapterList_EP  = 'https://api.quran.com/api/v4/chapters'
+const randomAyah_EndPoint = `${BASE_URL}/random`;
+const chapterList_EndPoint = 'https://api.quran.com/api/v4/chapters'
+
+// not sure about this endpoint check later
+const ayahByKey_EndPoint = (verse_key) => `${BASE_URL}/by_key/${verse_key}`;
+
 
 // General API call function
 const apiCall = async (url, params = {}) => {
@@ -21,8 +24,8 @@ const apiCall = async (url, params = {}) => {
     try {
         const response = await axios.request(config);
         return response.data;
-    } catch (error) {
-        console.error('Error:', error);
+    } catch (e) {
+        console.error('Error:', e);
         return null;
     }
 };
@@ -35,7 +38,7 @@ export const fetchRandomAyah = () => {
         words: 'true'
 
     };
-    return apiCall(getRandomAyah_EP, params);
+    return apiCall(randomAyah_EndPoint, params);
 };
 
 // Fetch Ayah by key with detailed fields
@@ -47,10 +50,15 @@ export const fetchAyahByKey = (verse_key, additionalParams = {}) => {
         words: 'true'
     };
     // e.g., {BASE_URL}/by_key/{verse_key}
-    const url = getAyahbyKey_EP(verse_key);
+    const url = ayahByKey_EndPoint(verse_key);
     return apiCall(url, params);
 };
 
+/* Fetch list chapters 
+ * language: string
+
+*/
 export const fetchChapterList = () => {
-    return apiCall(getChapterList_EP)
+    const params = { language: 'en' }
+    return apiCall(chapterList_EndPoint)
 }
