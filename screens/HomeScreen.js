@@ -106,7 +106,7 @@ export default function HomeScreen() {
     return (
         <View className="flex-1">
             <StatusBar style="dark" />
-            <SafeAreaView className="flex-1">
+            <SafeAreaView className="flex-1 justify-end">
 
                 <View className="items-center p-4 rounded-lg mx-4 my-4 bg-gray-500" >
                     <TouchableOpacity onPress={handleGetRandomAyah}>
@@ -137,10 +137,11 @@ export default function HomeScreen() {
 
                         </View>
 
-                        <View className="flex-1 border-black p-4 items-center rounded-lg border-2" style={{ marginHorizontal: 8, marginVertical: 8 }}>
+                        {/* ayah container */}
+                        <View className="flex-1 border-black p-4 items-center rounded-lg border-2 mb-12" style={{ marginHorizontal: 8, marginVertical: 8 }}>
                             <ScrollView
                                 className="flex-1 "
-                                contentContainerStyle={{ flexGrow: 1 }}
+                                contentContainerStyle={{ flexGrow: 0.8 }}
                                 indicatorStyle="black"
                                 showsVerticalScrollIndicator={true}
                             >

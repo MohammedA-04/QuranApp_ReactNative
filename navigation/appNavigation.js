@@ -24,7 +24,7 @@ export default function AppNavigation() {
 // Function to render: < <Screen{x}/> and <Navigation/> />
 function HomeScreenWithNav({ navigation: screen }) {
     return (
-        <View style={styles.screen}>
+        <View className="flex-1">
             <HomeScreen />
             <BottomNavigation navigation={screen} />
         </View>
@@ -33,7 +33,7 @@ function HomeScreenWithNav({ navigation: screen }) {
 
 function ChapterScreenWithNav({ navigation: screen }) {
     return (
-        <View style={styles.screen}>
+        <View className="flex-1">
             <ChapterScreen />
             <BottomNavigation navigation={screen} />
         </View>
