@@ -3,7 +3,8 @@ import axios from 'axios';
 // Base URL
 const BASE_URL = 'https://api.quran.com/api/v4/verses';
 const randomAyah_EndPoint = `${BASE_URL}/random`;
-const chapterList_EndPoint = 'https://api.quran.com/api/v4/chapters'
+const chapterList_EndPoint = 'https://api.quran.com/api/v4/chapters';
+const chapterX_EndPoint = 'https://api.quran.com/api/v4/verses/by_chapter';
 
 // not sure about this endpoint check later
 const ayahByKey_EndPoint = (verse_key) => `${BASE_URL}/by_key/${verse_key}`;
@@ -56,9 +57,25 @@ export const fetchAyahByKey = (verse_key, additionalParams = {}) => {
 
 /* Fetch list chapters 
  * language: string
-
 */
 export const fetchChapterList = () => {
     const params = { language: 'en' }
     return apiCall(chapterList_EndPoint)
+}
+
+/* Fetch chapter by name
+ * @param | chapter_number: number [required] (1-114)
+ * @param | language: string 
+ * @param | words: boolean (true includes words)
+ * 
+ * /verses/by_chapter/:chapter_number
+*/
+export const fetchChapterX = (chapter_number) => {
+    const params = {
+        language: 'english',
+        words: true,
+        fields: 'text_uthmani'
+    }
+    const url = `${chapterX_EndPoint}/${chapter_number}`
+    return apiCall(url, params)
 }
