@@ -79,3 +79,14 @@ export const fetchChapterX = (chapter_number) => {
     const url = `${chapterX_EndPoint}/${chapter_number}`
     return apiCall(url, params)
 }
+
+export const fetchChapterXpage = (chapter_number, page) => {
+    const params = {
+        language: 'english',
+        words: true,
+        fields: 'text_uthmani',
+        page: page // note this increment prior to invoke; [++]
+    }
+    const url = `${chapterX_EndPoint}/${chapter_number}`
+    return apiCall(url, params)
+}

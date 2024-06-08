@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import { View, Text, SafeAreaView, ScrollView, Pressable, ActivityIndicator, Modal, Image } from 'react-native'
-import { fetchChapterList, fetchChapterX } from '../api/quranAPI'
+import { fetchChapterList, fetchChapterX, fetchChapterXpage } from '../api/quranAPI'
 import { theme } from '../theme';
 
 export default function ChapterScreen() {
 
     const [list, setList] = useState(null);
     const [chapterContent, setChapterContent] = useState(null);
+    const [chapterName, setChapterName] = useState(null);
+    const [chapterID, setChapterID] = useState(null);
     const [modalVisible, setModalVisible] = useState(false);
 
     // code logic 
@@ -37,10 +39,24 @@ export default function ChapterScreen() {
     }*/
 
     // onPress <Pressable> => render component of Uthman Script and Translation which is mapped until ...n
-    const loadChapter = async (chapterId) => {
+    const loadChapter = async (chapterId, chapterName) => {
         const ch = await fetchChapterX(chapterId);
         setChapterContent(ch);
+        setChapterName(chapterName);
         setModalVisible(true);
+    };
+
+    // onPress <Pressable> => check if current < maxPG then change page
+    const nextPageInChapter = async (chapterID, currentPG, maxPG) => {
+
+        if (currentPG !== maxPG) {
+            setChapterContent(null); // due to shows <activity indicator/>
+            currentPG = currentPG + 1;
+            const ch = await fetchChapterXpage(chapterID, currentPG);
+            console.log(ch)
+            setChapterContent(null);
+            setChapterContent(ch);
+        }
     };
 
     return (
@@ -57,6 +73,7 @@ export default function ChapterScreen() {
 
                     </View>
 
+                    {/* 114 Surahs List */}
                     <ScrollView vertical>
                         <View className="mt-3 pb-32">
                             { // map $list => chapter show: surah no and name
@@ -68,7 +85,7 @@ export default function ChapterScreen() {
 
                                     return (
                                         <View className="p-1 rounded-md">
-                                            <Pressable onPress={() => { loadChapter(chapterId) }}>
+                                            <Pressable onPress={() => { loadChapter(chapterId, chapterName); setChapterID(chapterId) }}>
                                                 <View className="p-4 flex-row items-center rounded-xl" style={{ backgroundColor: theme.bgWhite(0.6) }}>
                                                     <Text className="items-center">{chapterId}</Text>
                                                     <Text className="ml-4 font-semibold text-lg">{chapterName}</Text>
@@ -108,32 +125,49 @@ export default function ChapterScreen() {
                             </View>
 
                             <View className="font-semibold text-lg">
-                                <Text>Ch Name</Text>
+                                <Text>{chapterName}</Text>
                             </View>
                         </View>
 
+                        {/* loading icon */}
                         {!chapterContent && (
                             <View>
                                 <ActivityIndicator size="large" color={"gray"} />
                             </View>
                         )}
 
+                        {/* ch content | [ayah number : surah] & script */}
                         {chapterContent && (
                             <View>
                                 <ScrollView vertical>
                                     {chapterContent.verses.map((verse, i) => (
-                                        <View key={i} className="flex-row mx-4 mt-8">
+                                        <View key={i} className="flex-row mx-4 mt-8 pb-20">
 
-                                            <View>
-                                                <Text className="text-xl">{verse.verse_key}</Text>
+                                            <View><Text className="text-xl">{verse.verse_key}</Text></View>
+                                            <View><Text className="text-4xl ml-10">{verse.text_uthmani}</Text></View>
+
+                                        </View>
+                                    ))}
+
+                                    {/* page info and next, prev page */}
+                                    <View className="flex items-center justify-center mx-10 border-t-2 border-black pb-28">
+                                        <View className="flex-row items-center space-x-2 mt-4">
+
+                                            <View className="right-4 rounded-md bg-red-400 p-2">
+                                                <Pressable><Text>Prev Page</Text></Pressable>
                                             </View>
-                                            <View>
-                                                <Text className="text-4xl ml-10">{verse.text_uthmani}</Text>
+
+                                            <Text className="font-medium text-xl">{chapterContent.pagination.current_page} out of {chapterContent.pagination.total_pages}</Text>
+
+                                            <View className="left-4 rounded-md bg-lime-400 p-2">
+                                                <Pressable onPress={() => nextPageInChapter(chapterID, chapterContent.pagination.current_page, chapterContent.pagination.total_pages)}><Text>Next Page</Text></Pressable>
                                             </View>
 
 
                                         </View>
-                                    ))}
+                                    </View>
+
+
                                 </ScrollView>
                             </View>
                         )}
