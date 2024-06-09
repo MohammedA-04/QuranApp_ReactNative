@@ -41,10 +41,25 @@ export default function ChapterScreen() {
     // onPress <Pressable> => render component of Uthman Script and Translation which is mapped until ...n
     const loadChapter = async (chapterId, chapterName) => {
         const ch = await fetchChapterX(chapterId);
+        console.log("ch: \n", ch)
         setChapterContent(ch);
         setChapterName(chapterName);
         setModalVisible(true);
     };
+
+
+    // onPress <Pressable> => check if current - 1 >  0
+    const previousPageInChapter = async (chapterID, currentPG) => {
+
+        if (currentPG - 1 > 0) {
+            setChapterContent(null)
+            currentPG = currentPG - 1;
+            const ch = await fetchChapterXpage(chapterID, currentPG);
+            setChapterContent(ch)
+
+        }
+
+    }
 
     // onPress <Pressable> => check if current < maxPG then change page
     const nextPageInChapter = async (chapterID, currentPG, maxPG) => {
@@ -53,11 +68,27 @@ export default function ChapterScreen() {
             setChapterContent(null); // due to shows <activity indicator/>
             currentPG = currentPG + 1;
             const ch = await fetchChapterXpage(chapterID, currentPG);
-            console.log(ch)
-            setChapterContent(null);
             setChapterContent(ch);
         }
     };
+
+    const getTranslation = (verse) => {
+
+        if (verse.words) {
+            return verse.words.map(word => word.translation.text).join(' ');
+        }
+        return '' // if null
+    }
+
+    const getTransliteration = (verse) => {
+
+        if (verse.words) {
+            return verse.words.map(word => word.transliteration.text).join(' ');
+        }
+        return '' // if null
+    }
+
+
 
     return (
         <View className="flex-1 bg-green-200 mx-0 my-0">
@@ -115,17 +146,17 @@ export default function ChapterScreen() {
                     <SafeAreaView>
 
                         {/* header section: close and ch.name */}
-                        <View className="flex-row bg-gray-200 items-center justify-center">
-                            <View className=" justify-start items-start">
-                                <Pressable onPress={() => setModalVisible(false)}>
-                                    <Image
-                                        className="w-10 h-10"
-                                        source={require('../assets/close.png')} />
-                                </Pressable>
-                            </View>
+                        <View className="flex-row bg-gray-200 items-center justify-between p-4 rounded-lg">
+                            {/* Close button at the start */}
+                            <Pressable onPress={() => setModalVisible(false)}>
+                                <Image
+                                    className="w-10 h-10"
+                                    source={require('../assets/close.png')} />
+                            </Pressable>
 
-                            <View className="font-semibold text-lg">
-                                <Text>{chapterName}</Text>
+                            {/* Centered title */}
+                            <View className="absolute left-32 transform -translate-x-1/2">
+                                <Text className="font-bold text-2xl text-center">{chapterName}</Text>
                             </View>
                         </View>
 
@@ -140,27 +171,51 @@ export default function ChapterScreen() {
                         {chapterContent && (
                             <View>
                                 <ScrollView vertical>
-                                    {chapterContent.verses.map((verse, i) => (
-                                        <View key={i} className="flex-row mx-4 mt-8 pb-20">
+                                    {chapterContent.verses.map((verse, i) => {
 
-                                            <View><Text className="text-xl">{verse.verse_key}</Text></View>
-                                            <View><Text className="text-4xl ml-10">{verse.text_uthmani}</Text></View>
+                                        // Stringify array of words for $verse
+                                        const translation = getTranslation(verse);
+                                        const transliteration = getTransliteration(verse);
 
-                                        </View>
-                                    ))}
+                                        // when FALSE then render border-b-2
+                                        const lastIteration = i === chapterContent.verses.length - 1; // return boolean
+
+                                        return (
+                                            <View key={i} className={`mx-4 mt-8 pb-10 space-y-4 ${!lastIteration && 'border-b-2 border-black'}`}>
+                                                <View className="flex-row items-center justify-center">
+
+                                                    <View className="w-1/5 items-center justify-center">
+                                                        <Text className="text-xl">{verse.verse_key}</Text>
+                                                    </View>
+
+                                                    <View className="mx-4">
+                                                        <Text className="text-4xl leading-relaxed text-wrap">{verse.text_uthmani}</Text>
+                                                    </View>
+
+                                                </View>
+                                                <Text className="text-lg">{translation}</Text>
+                                                <Text className="text-lg">{transliteration}</Text>
+                                            </View>
+
+                                        );
+                                    })}
 
                                     {/* page info and next, prev page */}
-                                    <View className="flex items-center justify-center mx-10 border-t-2 border-black pb-28">
+                                    <View className="flex items-center justify-center mx-10 border-t-2 border-black pb-48">
                                         <View className="flex-row items-center space-x-2 mt-4">
 
                                             <View className="right-4 rounded-md bg-red-400 p-2">
-                                                <Pressable><Text>Prev Page</Text></Pressable>
+                                                <Pressable onPress={() => previousPageInChapter(chapterID, chapterContent.pagination.current_page)}>
+                                                    <Text className="text-white font-semibold">Prev Page</Text>
+                                                </Pressable>
                                             </View>
 
                                             <Text className="font-medium text-xl">{chapterContent.pagination.current_page} out of {chapterContent.pagination.total_pages}</Text>
 
-                                            <View className="left-4 rounded-md bg-lime-400 p-2">
-                                                <Pressable onPress={() => nextPageInChapter(chapterID, chapterContent.pagination.current_page, chapterContent.pagination.total_pages)}><Text>Next Page</Text></Pressable>
+                                            <View className="left-4 rounded-md bg-lime-500 p-2">
+                                                <Pressable onPress={() => nextPageInChapter(chapterID, chapterContent.pagination.current_page, chapterContent.pagination.total_pages)}>
+                                                    <Text className=" text-gray-50 font-semibold">Next Page</Text>
+                                                </Pressable>
                                             </View>
 
 
