@@ -27,7 +27,7 @@ export default function AppNavigation() {
 function HomeScreenWithNav({ navigation: screen }) {
     return (
         <View className="flex-1">
-            <ChapterScreen />
+            <HomeScreen />
             <BottomNavigation navigation={screen} />
         </View>
     );
