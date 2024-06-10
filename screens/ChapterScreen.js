@@ -188,9 +188,12 @@ export default function ChapterScreen() {
                                                         <Text className="text-xl">{verse.verse_key}</Text>
                                                     </View>
 
-                                                    <View className="mx-4">
-                                                        <Text className="text-4xl leading-relaxed text-wrap">{verse.text_uthmani}</Text>
+                                                    <View className="flex-1 items-center justify-center">
+                                                        <View className="whitespace-normal overflow-x-auto" style={{ alignItems: 'center' }}>
+                                                            <Text className="text-4xl leading-relaxed text-wrap">{verse.text_uthmani}</Text>
+                                                        </View>
                                                     </View>
+
 
                                                 </View>
                                                 <Text className="text-lg">{translation}</Text>

@@ -1,22 +1,33 @@
-import React from 'react';
-import { View, Pressable, Text, StyleSheet } from 'react-native';
-import { theme } from '../theme/index'
-import { beginAsyncEvent } from 'react-native/Libraries/Performance/Systrace';
+import React, { useState } from 'react';
+import { View, Pressable, Text } from 'react-native';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { faGear, faList, faHouse } from '@fortawesome/free-solid-svg-icons';
 
-// Nav Bar for screens: (1) Home, (2) chapters
 export default function BottomNavigation({ navigation }) {
-    return (
-        <View className="flex-[0.1] bg-gray-200">
-            <View className="flex-row border-t-2 border-black justify-around p-2 absolute bottom-0 w-full mb-3 rounded-md ">
-                <Pressable className="p-2" onPress={() => navigation.navigate('Home')}>
-                    <Text className="text-lg font-semibold">Home</Text>
-                </Pressable>
+    const [selectedIcon, setSelectedIcon] = useState('home');
 
-                <Pressable className="p-2" onPress={() => navigation.navigate('Chapters')}>
-                    <Text className="text-lg font-semibold">Chapters</Text>
-                </Pressable>
+
+
+    return (
+        <View className="bg-gray-200">
+            <View className="border-t-2 border-black">
+                <View className="flex flex-row justify-around p-3 mb-4 mt-2">
+                    <Pressable onPress={() => navigation.navigate('Home')} className="items-center">
+                        <FontAwesomeIcon icon={faHouse} color={selectedIcon === 'home' ? 'blue' : 'black'} size={22} />
+                        <Text className="text-xs font-semibold text-gray-400 mt-1">Home</Text>
+                    </Pressable>
+
+                    <Pressable onPress={() => navigation.navigate('Chapters')} className="items-center">
+                        <FontAwesomeIcon icon={faList} color={selectedIcon === 'Chapters' ? 'blue' : 'black'} size={22} />
+                        <Text className="text-xs font-semibold text-gray-400 mt-1">Chapters</Text>
+                    </Pressable>
+
+                    <Pressable onPress={() => navigation.navigate('Settings')} className="items-center">
+                        <FontAwesomeIcon icon={faGear} color={selectedIcon === 'Settings' ? 'blue' : 'black'} size={22} />
+                        <Text className="text-xs font-semibold text-gray-400 mt-1">Settings</Text>
+                    </Pressable>
+                </View>
             </View>
         </View>
     );
-
 }
