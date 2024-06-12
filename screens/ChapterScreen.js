@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { View, Text, SafeAreaView, ScrollView, Pressable, ActivityIndicator, Modal, Image } from 'react-native'
 import { fetchChapterList, fetchChapterX, fetchChapterXpage } from '../api/quranAPI'
+import { SettingsContext } from '../SettingsContext';
 import { theme } from '../theme';
 
 export default function ChapterScreen() {
@@ -10,6 +11,8 @@ export default function ChapterScreen() {
     const [chapterName, setChapterName] = useState(null);
     const [chapterID, setChapterID] = useState(null);
     const [modalVisible, setModalVisible] = useState(false);
+
+    const { settings } = useContext(SettingsContext);
 
     // code logic 
     const getList = async () => {
@@ -30,13 +33,6 @@ export default function ChapterScreen() {
 
     }, [])
 
-
-    /* Going to load data for said chapter onClick
-    const getChapter = async (chapter_number) => {
-
-        const ch = await fetchChapterX(chapter_number);
-        
-    }*/
 
     // onPress <Pressable> => render component of Uthman Script and Translation which is mapped until ...n
     const loadChapter = async (chapterId, chapterName) => {
@@ -87,6 +83,8 @@ export default function ChapterScreen() {
         }
         return '' // if null
     }
+
+
 
 
 
@@ -173,9 +171,11 @@ export default function ChapterScreen() {
                                 <ScrollView vertical>
                                     {chapterContent.verses.map((verse, i) => {
 
-                                        // Stringify array of words for $verse
+
+                                        // * 'ON' then render translations
                                         const translation = getTranslation(verse);
                                         const transliteration = getTransliteration(verse);
+
 
                                         // when FALSE then render border-b-2
                                         const lastIteration = i === chapterContent.verses.length - 1; // return boolean
@@ -190,14 +190,24 @@ export default function ChapterScreen() {
 
                                                     <View className="flex-1 items-center justify-center">
                                                         <View className="whitespace-normal overflow-x-auto" style={{ alignItems: 'center' }}>
-                                                            <Text className="text-4xl leading-relaxed text-wrap">{verse.text_uthmani}</Text>
+                                                            <Text className={`${settings.System.textSize ? settings.System.textSize : 'text-4xl'} leading-relaxed text-wrap`}>{verse.text_uthmani}</Text>
                                                         </View>
                                                     </View>
 
 
                                                 </View>
-                                                <Text className="text-lg">{translation}</Text>
-                                                <Text className="text-lg">{transliteration}</Text>
+
+                                                {/* if toggled 'ON' then render */}
+                                                {settings.Language.translation && (
+                                                    <Text className="text-lg">{translation}</Text>
+                                                )}
+
+                                                {settings.Language.transliteration && (
+                                                    <Text className="text-lg">{transliteration}</Text>
+                                                )}
+
+
+
                                             </View>
 
                                         );

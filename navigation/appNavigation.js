@@ -8,18 +8,26 @@ import HomeScreen from '../screens/HomeScreen';
 import ChapterScreen from '../screens/ChapterScreen';
 import SettingScreen from '../screens/SettingsScreen';
 import BottomNavigation from '../components/BottomNavigation'; // Ensure the path is correct
+import { SettingsProvider } from '../SettingsContext'
+import { SelectProvider } from '@mobile-reality/react-native-select-pro';
 
 const Stack = createNativeStackNavigator();
 
 export default function AppNavigation() {
     return (
-        <NavigationContainer>
-            <Stack.Navigator screenOptions={{ headerShown: false }}>
-                <Stack.Screen name="Home" component={HomeScreenWithNav} />
-                <Stack.Screen name="Chapters" component={ChapterScreenWithNav} />
-                <Stack.Screen name="Settings" component={SettingsScreenWithNav} />
-            </Stack.Navigator>
-        </NavigationContainer>
+        <SettingsProvider>
+            <SelectProvider>
+                <NavigationContainer>
+                    <Stack.Navigator screenOptions={{ headerShown: false }}>
+                        <Stack.Screen name="Home" component={HomeScreenWithNav} />
+                        <Stack.Screen name="Chapters" component={ChapterScreenWithNav} />
+                        <Stack.Screen name="Settings" component={SettingsScreenWithNav} />
+                    </Stack.Navigator>
+                </NavigationContainer>
+            </SelectProvider>
+        </SettingsProvider>
+
+
     );
 }
 
