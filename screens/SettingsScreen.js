@@ -38,7 +38,7 @@ export default function SettingsScreen() {
                                         {key === 'textSize' && typeof value !== Boolean && (
                                             <View className="w-7/12">
                                                 <Select
-                                                    styles={{ marginHorizontal: 10 }}
+
                                                     options={textSizeOptions}
                                                     value={settedTextSize}
                                                     onSelect={(item) => handleTextSizeChange(item.value)}
