@@ -1,4 +1,3 @@
-// SettingsContext.js
 import React, { createContext, useState } from 'react';
 
 export const SettingsContext = createContext();
@@ -8,7 +7,8 @@ export const SettingsProvider = ({ children }) => {
         Language: {
             translation: false,
             transliteration: false,
-            language: 'en'
+            language: 'en',
+            version: 'Please choose a language first'
         },
         System: {
             textSize: '4xl',
@@ -40,10 +40,21 @@ export const SettingsProvider = ({ children }) => {
         }));
     };
 
+    /* function changes setting section[key] to key */
+    const changeSetting = (section, key, value) => {
+        setSettings(prevSettings => ({
+            ...prevSettings,
+            [section]: {
+                ...prevSettings[section],
+                [key]: value
+            }
+        }));
+    };
+
     return (
-        // {children}: special prop supposed to repsented the wrapped content inside
-        <SettingsContext.Provider value={{ settings, toggleSetting }}>
+        <SettingsContext.Provider value={{ settings, toggleSetting, changeSetting }}>
             {children}
         </SettingsContext.Provider>
     );
 };
+

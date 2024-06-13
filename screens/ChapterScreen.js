@@ -30,6 +30,7 @@ export default function ChapterScreen() {
     useEffect(() => {
 
         getList();
+        console.log('settings:', settings.System.textSize)
 
     }, [])
 
@@ -190,7 +191,7 @@ export default function ChapterScreen() {
 
                                                     <View className="flex-1 items-center justify-center">
                                                         <View className="whitespace-normal overflow-x-auto" style={{ alignItems: 'center' }}>
-                                                            <Text className={`${settings.System.textSize ? settings.System.textSize : 'text-4xl'} leading-relaxed text-wrap`}>{verse.text_uthmani}</Text>
+                                                            <Text className={`${settings.System.textSize !== '4xl' ? settings.System.textSize : 'text-4xl'} leading-relaxed text-wrap`}>{verse.text_uthmani}</Text>
                                                         </View>
                                                     </View>
 
@@ -199,8 +200,7 @@ export default function ChapterScreen() {
 
                                                 {/* if toggled 'ON' then render */}
                                                 {settings.Language.translation && (
-                                                    <Text>{translation}</Text>
-                                                
+                                                    <Text className="text-lg">{translation}</Text>  
                                                 )}
 
                                                 {settings.Language.transliteration && (

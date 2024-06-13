@@ -3,23 +3,36 @@ import { View, Text, SafeAreaView, Switch, ScrollView, StatusBar } from 'react-n
 import { Select } from '@mobile-reality/react-native-select-pro'; // Adjust import based on your Select component
 import { SettingsContext } from '../SettingsContext';
 import { textSizeOptions, languageOptions } from '../theme'; // Adjust import based on your textSizeOptions source
+import { fetchTranslations } from '../api/quranAPI';
 
 export default function SettingsScreen() {
-    const { settings, toggleSetting } = useContext(SettingsContext);
-
+    const { settings, toggleSetting, changeSetting } = useContext(SettingsContext);
     const [settedTextSize, setTextSize] = useState(settings.System.textSize);
     const [settedLanguage, setLanguage] = useState(settings.Language.language);
+    const [filteredChoiceName, setfilteredChoices] = useState(null);
 
     const handleTextSizeChange = (value) => {
         setTextSize(value);
         // Update textSize setting in context
-        toggleSetting('System', 'textSize', value);
+        changeSetting('System', 'textSize', value);
     };
 
-    const handleLanguageChange = (value) => {
+    const handleLanguageChange = async (value) => {
         setLanguage(value);
-        toggleSetting('Language', 'language', value);
+        changeSetting('Language', 'language', value);
+
+        // get choice && filter only their translation{[name: 'en-haleem']}
+        const choices = await fetchTranslations(value);
+        const filteredChoicesNames = choices.filter(i => i.name);
+        
+        console.log(filteredChoiceName)
+
+        // setfilteredChoices(filteredChoicesNames)
+
+
     }
+
+  
 
     return (
         <SafeAreaView style={{ flex: 1 }}>
@@ -43,28 +56,34 @@ export default function SettingsScreen() {
                                             />
                                         )}
 
-                                        {key === 'language' && sectionName === 'Language' && typeof value !== Boolean && (
+                                        {key === 'language' && typeof value !== Boolean && (
                                             <View className="w-7/12">
                                                 <Select
+                                                    options={languageOptions}
+                                                    value={settedLanguage} // initally set to 'en'
+                                                    onSelect={(item) => handleLanguageChange(item.value)}
+                                                    onRemove={() => handleLanguageChange(null)}
+/>
+                                            </View>
 
-                                                options={languageOptions}
-                                                value={settedLanguage} // intially set to 'en'
-                                                onSelect={(item) => handleLanguageChange(item.value)}
-                                                onRemove={() => handleLanguageChange(null)}
-                                               />
-                                            </View> 
+                                        )}
+
+                                    {key === 'version' && settedLanguage && typeof value !== Boolean && (
+                                            <Select
+                                                options={textSizeOptions}
+                                                value={settedLanguage}
+                                            />
                                         )}
 
 
-                                        {key === 'textSize' && sectionName === 'System' && typeof value !== Boolean && (
+                                        {key === 'textSize' && typeof value !== Boolean && (
                                             <View className="w-7/12">
                                                 <Select
-
                                                     options={textSizeOptions}
                                                     value={settedTextSize} // initally set to text-4xl
                                                     onSelect={(item) => handleTextSizeChange(item.value)}
                                                     onRemove={() => handleTextSizeChange(null)}
-                                                />
+/>
                                             </View>
 
                                         )}
