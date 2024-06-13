@@ -5,13 +5,13 @@ import { SettingsContext } from '../SettingsContext';
 import { textSizeOptions } from '../theme'; // Adjust import based on your textSizeOptions source
 
 export default function SettingsScreen() {
-    const { settings, toggleSetting } = useContext(SettingsContext);
+    const { settings, toggleSetting, changeSetting } = useContext(SettingsContext);
     const [settedTextSize, setTextSize] = useState(settings.System.textSize);
 
     const handleTextSizeChange = (value) => {
         setTextSize(value);
         // Update textSize setting in context
-        toggleSetting('System', 'textSize', value);
+        changeSetting('System', 'textSize', value);
     };
 
     return (
@@ -38,12 +38,11 @@ export default function SettingsScreen() {
                                         {key === 'textSize' && typeof value !== Boolean && (
                                             <View className="w-7/12">
                                                 <Select
-
                                                     options={textSizeOptions}
                                                     value={settedTextSize}
                                                     onSelect={(item) => handleTextSizeChange(item.value)}
                                                     onRemove={() => handleTextSizeChange(null)}
-                                                />
+/>
                                             </View>
 
                                         )}
