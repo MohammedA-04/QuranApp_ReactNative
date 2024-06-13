@@ -11,3 +11,16 @@ export const textSizeOptions = [
     { label: 'Extra Large x3', value: 'text-3xl' },
     { label: 'Extra Large x4', value: 'text-4xl' },
 ];
+
+// * @ISSUE: api all language need to contact quran.com
+export const languageOptions = [
+    { label: 'english', value: 'en' },
+    { label: 'french', value: 'fr' },
+    { label: 'spanish', value: 'es' }, 
+];
+
+export const languageMap = {
+    fr: 'french',
+    en: 'english',
+    es: 'spanish'
+}

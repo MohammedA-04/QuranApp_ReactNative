@@ -17,7 +17,7 @@ export default function ChapterScreen() {
     // code logic 
     const getList = async () => {
 
-        const list = await fetchChapterList();
+        const list = await fetchChapterList(settings.Language.language);
 
         const chapterData = list.chapters.map(chapter => ({
             [chapter.name_simple]: chapter.id
@@ -36,7 +36,7 @@ export default function ChapterScreen() {
 
     // onPress <Pressable> => render component of Uthman Script and Translation which is mapped until ...n
     const loadChapter = async (chapterId, chapterName) => {
-        const ch = await fetchChapterX(chapterId);
+        const ch = await fetchChapterX(chapterId, settings.Language.language);
         console.log("ch: \n", ch)
         setChapterContent(ch);
         setChapterName(chapterName);
@@ -50,7 +50,7 @@ export default function ChapterScreen() {
         if (currentPG - 1 > 0) {
             setChapterContent(null)
             currentPG = currentPG - 1;
-            const ch = await fetchChapterXpage(chapterID, currentPG);
+            const ch = await fetchChapterXpage(chapterID, currentPG, settings.Language.language);
             setChapterContent(ch)
 
         }
@@ -63,7 +63,7 @@ export default function ChapterScreen() {
         if (currentPG !== maxPG) {
             setChapterContent(null); // due to shows <activity indicator/>
             currentPG = currentPG + 1;
-            const ch = await fetchChapterXpage(chapterID, currentPG);
+            const ch = await fetchChapterXpage(chapterID, currentPG, settings.Language.language);
             setChapterContent(ch);
         }
     };
@@ -199,11 +199,13 @@ export default function ChapterScreen() {
 
                                                 {/* if toggled 'ON' then render */}
                                                 {settings.Language.translation && (
-                                                    <Text className="text-lg">{translation}</Text>
+                                                    <Text>{translation}</Text>
+                                                
                                                 )}
 
                                                 {settings.Language.transliteration && (
-                                                    <Text className="text-lg">{transliteration}</Text>
+                                                    
+                                                    <Text>{transliteration}</Text>
                                                 )}
 
 

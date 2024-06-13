@@ -8,7 +8,7 @@ export const SettingsProvider = ({ children }) => {
         Language: {
             translation: false,
             transliteration: false,
-            language: 'english'
+            language: 'en'
         },
         System: {
             textSize: '4xl',

@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { SettingsContext } from '../SettingsContext';
 
 // Base URL
 const BASE_URL = 'https://api.quran.com/api/v4/verses';
@@ -58,8 +59,8 @@ export const fetchAyahByKey = (verse_key, additionalParams = {}) => {
 /* Fetch list chapters 
  * language: string
 */
-export const fetchChapterList = () => {
-    const params = { language: 'en' }
+export const fetchChapterList = (language) => {
+    const params = { language:  language}
     return apiCall(chapterList_EndPoint)
 }
 
@@ -70,9 +71,9 @@ export const fetchChapterList = () => {
  * 
  * /verses/by_chapter/:chapter_number
 */
-export const fetchChapterX = (chapter_number) => {
+export const fetchChapterX = (chapter_number, language) => {
     const params = {
-        language: 'english',
+        language: language,
         words: true,
         fields: 'text_uthmani'
     }
@@ -80,13 +81,20 @@ export const fetchChapterX = (chapter_number) => {
     return apiCall(url, params)
 }
 
-export const fetchChapterXpage = (chapter_number, page) => {
+export const fetchChapterXpage = (chapter_number, page, language) => {
+    const lang = convertKeyCodeToCountry(language)
     const params = {
-        language: 'english',
+        language: lang,
         words: true,
         fields: 'text_uthmani',
         page: page // note this increment prior to invoke; [++]
     }
     const url = `${chapterX_EndPoint}/${chapter_number}`
     return apiCall(url, params)
+}
+
+
+function convertKeyCodeToCountry(e){
+    console.log('test', e)
+    return e
 }

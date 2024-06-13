@@ -2,17 +2,24 @@ import React, { useContext, useState } from 'react';
 import { View, Text, SafeAreaView, Switch, ScrollView, StatusBar } from 'react-native';
 import { Select } from '@mobile-reality/react-native-select-pro'; // Adjust import based on your Select component
 import { SettingsContext } from '../SettingsContext';
-import { textSizeOptions } from '../theme'; // Adjust import based on your textSizeOptions source
+import { textSizeOptions, languageOptions } from '../theme'; // Adjust import based on your textSizeOptions source
 
 export default function SettingsScreen() {
     const { settings, toggleSetting } = useContext(SettingsContext);
+
     const [settedTextSize, setTextSize] = useState(settings.System.textSize);
+    const [settedLanguage, setLanguage] = useState(settings.Language.language);
 
     const handleTextSizeChange = (value) => {
         setTextSize(value);
         // Update textSize setting in context
         toggleSetting('System', 'textSize', value);
     };
+
+    const handleLanguageChange = (value) => {
+        setLanguage(value);
+        toggleSetting('Language', 'language', value);
+    }
 
     return (
         <SafeAreaView style={{ flex: 1 }}>
@@ -31,23 +38,37 @@ export default function SettingsScreen() {
                                         <Text style={{ flex: 1, fontWeight: 'bold' }}>{key}:</Text>
                                         {typeof value === 'boolean' && (
                                             <Switch
-                                                onValueChange={() => toggleSetting(sectionName, key)}
+                                                onValueChange={() => toggleSetting(sectionName, key)} // negates 'key'
                                                 value={value}
                                             />
                                         )}
-                                        {key === 'textSize' && typeof value !== Boolean && (
+
+                                        {key === 'language' && sectionName === 'Language' && typeof value !== Boolean && (
+                                            <View className="w-7/12">
+                                                <Select
+
+                                                options={languageOptions}
+                                                value={settedLanguage} // intially set to 'en'
+                                                onSelect={(item) => handleLanguageChange(item.value)}
+                                                onRemove={() => handleLanguageChange(null)}
+                                               />
+                                            </View> 
+                                        )}
+
+
+                                        {key === 'textSize' && sectionName === 'System' && typeof value !== Boolean && (
                                             <View className="w-7/12">
                                                 <Select
 
                                                     options={textSizeOptions}
-                                                    value={settedTextSize}
+                                                    value={settedTextSize} // initally set to text-4xl
                                                     onSelect={(item) => handleTextSizeChange(item.value)}
                                                     onRemove={() => handleTextSizeChange(null)}
                                                 />
                                             </View>
 
                                         )}
-                                        {typeof value !== 'boolean' && key !== 'textSize' && (
+                                        {typeof value !== 'boolean' && key !== 'textSize' && key !== 'language' && (
                                             <Text style={{ flex: 1 }}>{String(value)}</Text>
                                         )}
                                     </View>
