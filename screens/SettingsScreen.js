@@ -11,6 +11,7 @@ export default function SettingsScreen() {
     const [settedLanguage, setLanguage] = useState(settings.Language.language);
 
     const [filteredOptions, setfilteredChoices] = useState(null);
+    const [exportedOptions, setExportedOptions] = useState(null);
     const [settedChoice, setChoice] = useState(null);
 
     const handleTextSizeChange = (value) => {
@@ -20,10 +21,12 @@ export default function SettingsScreen() {
     };
 
     const handleLanguageChange = async (value) => {
+
+        setLanguage(null);
         setLanguage(value);
         changeSetting('Language', 'language', value);
 
-        // get choice && filter only their translation{[name: 'en-haleem']}
+        // returns translationObject 
         const choices = await fetchTranslations(settedLanguage);
         const filteredChoices = {};
 
@@ -33,24 +36,40 @@ export default function SettingsScreen() {
             }
         }
 
+        // select component only takes {label, value}
         const optionsArray = Object.keys(filteredChoices).map(key => ({
             label: filteredChoices[key].name,
             value: key
         }));
 
-        console.log("type of optionsArray: ", typeof optionsArray)
-        setfilteredChoices(optionsArray)
+        setfilteredChoices(optionsArray); // export options
+        setExportedOptions(filteredChoices); // export FULL CHOICE ARRAY
     }
 
     const handleLanguageTranslation = async (value) => {
-        setChoice(null);
-        setChoice(value);
-        console.log("type of settedChoice: ", typeof settedChoice)
 
-        // update language translation
-        changeSetting('Language', 'version', value);
+        if (!settedChoice){
+            setChoice(null);
+            changeSetting('Language', 'version', null);
+        }
+        else{
+            const arraySelect = exportedOptions[value]
+            setChoice(arraySelect.id)
+
+            console.log("value:", arraySelect.name)
+            console.log("id:", arraySelect.id)
+            
+            // update language translation
+            changeSetting('Language', 'version', value);
+        }
+        
+        
 
     }
+
+
+   
+
 
 
 
@@ -92,10 +111,10 @@ export default function SettingsScreen() {
                                             <Select
                                                 options={filteredOptions}
                                                 value={settedChoice}
-                                                onSelect={(item) => handleLanguageTranslation(item.value)}
+                                                onSelect={(item) => handleLanguageTranslation(item)}
                                                 onRemove={() => handleLanguageTranslation(null)}
                                             // when $lang is choosen then load options suchas filteredOptions
-                                            // 
+                                            // handleLanguage trnaslation get list for a language
                                             />
                                         )}
 

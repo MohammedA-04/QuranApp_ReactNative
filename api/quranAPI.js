@@ -128,7 +128,7 @@ export const fetchTranslations = async (language) => {
 
         // Iterate through each property in the data objectf
         for (let i = 0; i < data.translations.length; i++) {
-            if (data.translations[i].language_name.toLowerCase() === lang.toLowerCase()) {
+            if (data.translations[i].language_name === lang) {
                 translationsObject[data.translations[i].name] = data.translations[i];
             }
         }
