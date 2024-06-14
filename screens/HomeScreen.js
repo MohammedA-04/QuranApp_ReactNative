@@ -1,14 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { SafeAreaView, ScrollView, Text, TouchableOpacity, View, ActivityIndicator } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { fetchAyahByKey, fetchChapterList, fetchRandomAyah } from "../api/quranAPI"; // Ensure the path is correct
 import { theme } from '../theme/index'; // Ensure the path is correct
+import { SettingsContext } from '../SettingsContext';
 
 export default function HomeScreen() {
     const [clicked, setClicked] = useState(false);
     const [randomAyah, setRandomAyah] = useState(null);
     const [translationText, setTranslationText] = useState(null);
     const [chapter, setChapter] = useState(null);
+
+    const { settings } = useContext(SettingsContext);
 
     const handleGetRandomAyah = async () => {
         // Gets a random ayah
@@ -21,7 +24,7 @@ export default function HomeScreen() {
             console.log('key: ', data.verse.verse_key);
 
             // Fetch detailed Ayah data
-            const dataByAyah = await fetchAyahByKey(data.verse.verse_key, { words: true });
+            const dataByAyah = await fetchAyahByKey(data.verse.verse_key, { words: true }, settings.Language.language, settings.Language.version);
             console.log('data by ayah:\n', dataByAyah);
 
             // Log translations if present

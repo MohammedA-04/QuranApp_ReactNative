@@ -36,9 +36,11 @@ const apiCall = async (url, params = {}) => {
 };
 
 // Fetch random Ayah with detailed fields
-export const fetchRandomAyah = () => {
+export const fetchRandomAyah = (language, translation) => {
+    const lang = convertKeyCodeToCountry(language)
     const params = {
-        translations: 'en.sahih',
+        translations: translation,
+        language: lang,
         fields: 'text_uthmani,text_uthmani_simple,text_imlaei,text_indopak,words',
         words: 'true'
 
@@ -63,7 +65,7 @@ export const fetchAyahByKey = (verse_key, additionalParams = {}) => {
  * language: string
 */
 export const fetchChapterList = (language) => {
-    const params = { language:  language}
+    const params = { language: language }
     return apiCall(chapterList_EndPoint)
 }
 
@@ -74,9 +76,11 @@ export const fetchChapterList = (language) => {
  * 
  * /verses/by_chapter/:chapter_number
 */
-export const fetchChapterX = (chapter_number, language) => {
+export const fetchChapterX = (chapter_number, language, translation) => {
+    const lang = convertKeyCodeToCountry(language)
     const params = {
-        language: language,
+        language: lang,
+        translations: translation,
         words: true,
         fields: 'text_uthmani'
     }
@@ -84,10 +88,11 @@ export const fetchChapterX = (chapter_number, language) => {
     return apiCall(url, params)
 }
 
-export const fetchChapterXpage = (chapter_number, page, language) => {
+export const fetchChapterXpage = (chapter_number, page, language, translation) => {
     const lang = convertKeyCodeToCountry(language)
     const params = {
         language: lang,
+        translations: translation,
         words: true,
         fields: 'text_uthmani',
         page: page // note this increment prior to invoke; [++]
@@ -97,9 +102,9 @@ export const fetchChapterXpage = (chapter_number, page, language) => {
 }
 
 
-function convertKeyCodeToCountry(e){
-    console.log('test', e)
-    return e
+function convertKeyCodeToCountry(e) {
+    const lang = languageMap[e]
+    return lang
 }
 
 export const fetchTranslations = async (language) => {
@@ -111,26 +116,25 @@ export const fetchTranslations = async (language) => {
 
     const lang = languageMap[language] // gets e.g., 'fr' for french
     console.log('log: ', lang)
-   
-    
-    try{ const url = `${translations_EndPoint}?language=${lang}`
-        const data = await apiCall(url)
-        
-        // returns translator if === language )
-        console.log('datattt', data)
-       
+
+
+    // Issue we have language and select it but cannot seem to push into object
+
+    try {
+        const url = `${translations_EndPoint}?language=${lang}`
+        const data = await apiCall(url);
+
+        const translationsObject = {};
+
         // Iterate through each property in the data objectf
-        const translationsObject  = {};
-        for(let i=0; i < data.length; i++){
-               tr.push({name: data.translations[i].name});
+        for (let i = 0; i < data.translations.length; i++) {
+            if (data.translations[i].language_name.toLowerCase() === lang.toLowerCase()) {
+                translationsObject[data.translations[i].name] = data.translations[i];
             }
+        }
 
-        
-        
-
-
-        console.log("this", translationsObject)
+        console.log("translationsObj: ", translationsObject)
         return translationsObject;
-        
-    }catch (e){console.log('Error:',e)}
+
+    } catch (e) { console.log('Error:', e) }
 }

@@ -9,7 +9,9 @@ export default function SettingsScreen() {
     const { settings, toggleSetting, changeSetting } = useContext(SettingsContext);
     const [settedTextSize, setTextSize] = useState(settings.System.textSize);
     const [settedLanguage, setLanguage] = useState(settings.Language.language);
-    const [filteredChoiceName, setfilteredChoices] = useState(null);
+
+    const [filteredOptions, setfilteredChoices] = useState(null);
+    const [settedChoice, setChoice] = useState(null);
 
     const handleTextSizeChange = (value) => {
         setTextSize(value);
@@ -22,17 +24,35 @@ export default function SettingsScreen() {
         changeSetting('Language', 'language', value);
 
         // get choice && filter only their translation{[name: 'en-haleem']}
-        const choices = await fetchTranslations(value);
-        const filteredChoicesNames = choices.filter(i => i.name);
-        
-        console.log(filteredChoiceName)
+        const choices = await fetchTranslations(settedLanguage);
+        const filteredChoices = {};
 
-        // setfilteredChoices(filteredChoicesNames)
+        for (let key in choices) {
+            if (choices.hasOwnProperty(key)) {
+                filteredChoices[key] = choices[key];
+            }
+        }
 
+        const optionsArray = Object.keys(filteredChoices).map(key => ({
+            label: filteredChoices[key].name,
+            value: key
+        }));
+
+        console.log("type of optionsArray: ", typeof optionsArray)
+        setfilteredChoices(optionsArray)
+    }
+
+    const handleLanguageTranslation = async (value) => {
+        setChoice(null);
+        setChoice(value);
+        console.log("type of settedChoice: ", typeof settedChoice)
+
+        // update language translation
+        changeSetting('Language', 'version', value);
 
     }
 
-  
+
 
     return (
         <SafeAreaView style={{ flex: 1 }}>
@@ -63,15 +83,19 @@ export default function SettingsScreen() {
                                                     value={settedLanguage} // initally set to 'en'
                                                     onSelect={(item) => handleLanguageChange(item.value)}
                                                     onRemove={() => handleLanguageChange(null)}
-/>
+                                                />
                                             </View>
 
                                         )}
 
-                                    {key === 'version' && settedLanguage && typeof value !== Boolean && (
+                                        {key === 'version' && sectionName === 'Language' && settedLanguage && typeof value !== Boolean && filteredOptions && (
                                             <Select
-                                                options={textSizeOptions}
-                                                value={settedLanguage}
+                                                options={filteredOptions}
+                                                value={settedChoice}
+                                                onSelect={(item) => handleLanguageTranslation(item.value)}
+                                                onRemove={() => handleLanguageTranslation(null)}
+                                            // when $lang is choosen then load options suchas filteredOptions
+                                            // 
                                             />
                                         )}
 
@@ -83,7 +107,7 @@ export default function SettingsScreen() {
                                                     value={settedTextSize} // initally set to text-4xl
                                                     onSelect={(item) => handleTextSizeChange(item.value)}
                                                     onRemove={() => handleTextSizeChange(null)}
-/>
+                                                />
                                             </View>
 
                                         )}

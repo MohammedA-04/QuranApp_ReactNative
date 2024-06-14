@@ -16,7 +16,7 @@ export const textSizeOptions = [
 export const languageOptions = [
     { label: 'english', value: 'en' },
     { label: 'french', value: 'fr' },
-    { label: 'spanish', value: 'es' }, 
+    { label: 'spanish', value: 'es' },
 ];
 
 export const languageMap = {
