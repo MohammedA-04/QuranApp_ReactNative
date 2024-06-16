@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { View, Text, SafeAreaView, Switch, ScrollView, StatusBar } from 'react-native';
 import { Select } from '@mobile-reality/react-native-select-pro'; // Adjust import based on your Select component
 import { SettingsContext } from '../SettingsContext';
@@ -8,67 +8,70 @@ import { fetchTranslations } from '../api/quranAPI';
 export default function SettingsScreen() {
     const { settings, toggleSetting, changeSetting } = useContext(SettingsContext);
     const [settedTextSize, setTextSize] = useState(settings.System.textSize);
-    const [settedLanguage, setLanguage] = useState(settings.Language.language);
+    const [settedLanguage, setLanguage] = useState('en');
 
-    const [filteredOptions, setfilteredChoices] = useState(null);
-    const [exportedOptions, setExportedOptions] = useState(null);
-    const [settedChoice, setChoice] = useState(null);
+    const [filteredOptions, setFilteredOptions] = useState([]);
+    const [exportedOptions, setExportedOptions] = useState([]);
+    const [settedChoice, setChoice] = useState(null); // for: en-sahih-international 
 
     const handleTextSizeChange = (value) => {
-        setTextSize(value);
         // Update textSize setting in context
+        setTextSize(value);
         changeSetting('System', 'textSize', value);
     };
 
-    const handleLanguageChange = async (value) => {
+    useEffect(() => {
+        const updateLanguage = async () => {
+            const choices = await fetchTranslations(settedLanguage);
+            const filteredChoices = {};
 
-        setLanguage(null);
-        setLanguage(value);
-        changeSetting('Language', 'language', value);
-
-        // returns translationObject 
-        const choices = await fetchTranslations(settedLanguage);
-        const filteredChoices = {};
-
-        for (let key in choices) {
-            if (choices.hasOwnProperty(key)) {
-                filteredChoices[key] = choices[key];
+            // returns translationObject 
+            for (let key in choices) {
+                if (choices.hasOwnProperty(key)) {
+                    filteredChoices[key] = choices[key];
+                }
             }
-        }
 
-        // select component only takes {label, value}
-        const optionsArray = Object.keys(filteredChoices).map(key => ({
-            label: filteredChoices[key].name,
-            value: key
-        }));
+            // select component only takes {label, value}
+            const optionsArray = Object.keys(filteredChoices).map(key => ({
+                label: filteredChoices[key].name,
+                value: key
+            }));
 
-        setfilteredChoices(optionsArray); // export options
-        setExportedOptions(filteredChoices); // export FULL CHOICE ARRAY
+            console.log('Options array:', optionsArray);
+            setExportedOptions(optionsArray); // Export options
+            setFilteredOptions(filteredChoices); // Export FULL CHOICE ARRAY
+
+
+        };
+
+        updateLanguage()
+
+    }, [settedLanguage]);
+
+
+    // changes language and in settings.Language
+    const handleLanguageChange = async (value) => {
+        setLanguage(value);
+        changeSetting('Language', 'language', value)
+
     }
 
     const handleLanguageTranslation = async (value) => {
+        // update language translation
+        // 1. set new choice as value 
+        // 2. then update settings 
+        // 3. trigger useEffect then render
 
-        if (!settedChoice){
-            setChoice(null);
-            changeSetting('Language', 'version', null);
-        }
-        else{
-            const arraySelect = exportedOptions[value]
-            setChoice(arraySelect.id)
+        const arraySelect = filteredOptions[value];
+        console.log('Selected translation:', arraySelect);
 
-            console.log("value:", arraySelect.name)
-            console.log("id:", arraySelect.id)
-            
-            // update language translation
-            changeSetting('Language', 'version', value);
-        }
-        
-        
-
+        setChoice(arraySelect.id)
+        changeSetting('Language', 'version', arraySelect.id);
     }
 
 
-   
+
 
 
 
@@ -109,9 +112,9 @@ export default function SettingsScreen() {
 
                                         {key === 'version' && sectionName === 'Language' && settedLanguage && typeof value !== Boolean && filteredOptions && (
                                             <Select
-                                                options={filteredOptions}
+                                                options={exportedOptions}
                                                 value={settedChoice}
-                                                onSelect={(item) => handleLanguageTranslation(item)}
+                                                onSelect={(item) => handleLanguageTranslation(item.value)}
                                                 onRemove={() => handleLanguageTranslation(null)}
                                             // when $lang is choosen then load options suchas filteredOptions
                                             // handleLanguage trnaslation get list for a language
