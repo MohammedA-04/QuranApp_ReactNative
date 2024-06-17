@@ -38,6 +38,7 @@ export default function ChapterScreen() {
     // onPress <Pressable> => render component of Uthman Script and Translation which is mapped until ...n
     const loadChapter = async (chapterId, chapterName) => {
         const ch = await fetchChapterX(chapterId, settings.Language.language, settings.Language.version);
+        console.log('data: ', ch)
 
         setChapterContent(ch);
         setChapterName(chapterName);
@@ -71,11 +72,22 @@ export default function ChapterScreen() {
 
     const getTranslation = (verse) => {
 
-        
-        if (verse.words) {
-            return verse.words.map(word => word.translation.text).join(' ');
+        if (settings.Language.language === false && settings.System.version === false) {
+            if (verse.words) {
+                return verse.words.map(word => word.translation.text).join(' ');
+            }
+            return '' // if null
+        } else {
+            // if (settings.Language.language === true && settings.System.version === true)
+            if (verse.words) {
+                return verse.translations[0].text;
+            }
+            return '' // if null
+
         }
-        return '' // if null
+
+
+
     }
 
     const getTransliteration = (verse) => {
@@ -85,7 +97,7 @@ export default function ChapterScreen() {
         }*/
 
         // suppose to load resource_id via settings.Language.version's id
-        if (verse.translations){
+        if (verse.translations) {
             return verse.translations.text
         }
 

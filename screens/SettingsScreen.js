@@ -8,11 +8,13 @@ import { fetchTranslations } from '../api/quranAPI';
 export default function SettingsScreen() {
     const { settings, toggleSetting, changeSetting } = useContext(SettingsContext);
     const [settedTextSize, setTextSize] = useState(settings.System.textSize);
-    const [settedLanguage, setLanguage] = useState('en');
+    const [settedLanguage, setLanguage] = useState(settings.Language.language);
 
     const [filteredOptions, setFilteredOptions] = useState([]);
     const [exportedOptions, setExportedOptions] = useState([]);
-    const [settedChoice, setChoice] = useState(null); // for: en-sahih-international 
+    const [settedChoice, setChoice] = useState(settings.System.version); // {number: 20 [en-sahih-international]}
+
+    const [isLangTranslationsLoaded, setLangTranslationsLoaded] = useState(false);
 
     const handleTextSizeChange = (value) => {
         // Update textSize setting in context
@@ -35,40 +37,62 @@ export default function SettingsScreen() {
             // select component only takes {label, value}
             const optionsArray = Object.keys(filteredChoices).map(key => ({
                 label: filteredChoices[key].name,
-                value: key
+                value: filteredChoices[key].id
             }));
 
             console.log('Options array:', optionsArray);
+
+            // reset boht exported 
+            setExportedOptions(null);
+            setFilteredOptions(null);
+
+            // exporting to component
             setExportedOptions(optionsArray); // Export options
             setFilteredOptions(filteredChoices); // Export FULL CHOICE ARRAY
+
+
+            // reset 
+            setLangTranslationsLoaded(false)
+            setLangTranslationsLoaded(true)
+
 
 
         };
 
         updateLanguage()
 
-    }, [settedLanguage]);
+    }, [settedLanguage, setChoice]);
 
 
     // changes language and in settings.Language
     const handleLanguageChange = async (value) => {
+
+        // changing
         setLanguage(value);
+        setChoice(null)
+        // update settings
         changeSetting('Language', 'language', value)
 
     }
 
-    const handleLanguageTranslation = async (value) => {
+    const handleLanguageTranslationChange = async (value) => {
         // update language translation
         // 1. set new choice as value 
         // 2. then update settings 
         // 3. trigger useEffect then render
+        if (!value) {
+            console.error('No value selected for translation change');
+            return;
+        }
 
-        const arraySelect = filteredOptions[value];
-        console.log('Selected translation:', arraySelect);
+        console.log('Value aka translation id', value);
 
-        setChoice(arraySelect.id)
-        changeSetting('Language', 'version', arraySelect.id);
-    }
+        // value is $id from optionsArray {label: 'name', value: 'id'}
+        setChoice(value);
+        changeSetting('Language', 'version', value);
+        console.log(`choice is now: ${choice} and id in setting is ${value}`)
+    };
+
 
 
 
@@ -110,16 +134,20 @@ export default function SettingsScreen() {
 
                                         )}
 
-                                        {key === 'version' && sectionName === 'Language' && settedLanguage && typeof value !== Boolean && filteredOptions && (
-                                            <Select
-                                                options={exportedOptions}
-                                                value={settedChoice}
-                                                onSelect={(item) => handleLanguageTranslation(item.value)}
-                                                onRemove={() => handleLanguageTranslation(null)}
-                                            // when $lang is choosen then load options suchas filteredOptions
-                                            // handleLanguage trnaslation get list for a language
-                                            />
-                                        )}
+                                        {isLangTranslationsLoaded === true &&
+                                            (key === 'version' && sectionName === 'Language') && (
+                                                <View className="w-7/12">
+                                                    <Select
+                                                        options={exportedOptions}
+                                                        value={settedChoice}
+                                                        onSelect={(item) => handleLanguageTranslationChange(item.value)}
+                                                        onRemove={() => handleLanguageTranslationChange(null)}
+                                                    // when $lang is choosen then load options suchas filteredOptions
+                                                    // handleLanguage trnaslation get list for a language
+                                                    />
+                                                </View>
+
+                                            )}
 
 
                                         {key === 'textSize' && typeof value !== Boolean && (
