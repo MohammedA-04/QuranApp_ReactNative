@@ -72,40 +72,32 @@ export default function ChapterScreen() {
 
     const getTranslation = (verse) => {
 
-        if (settings.Language.language === false && settings.System.version === false) {
-            if (verse.words) {
-                return verse.words.map(word => word.translation.text).join(' ');
-            }
-            return '' // if null
-        } else {
-            // if (settings.Language.language === true && settings.System.version === true)
-            if (verse.words) {
+        // check possible null entry
+        if (verse.translations) {
+            if (settings.Language.translation === true && settings.Language.language === true && settings.System.version === true) {
+                return verse.translations[0].text;
+
+            } else if (settings.Language.translation === true) {
+                // e.g., if condiiton fails, we want situation where toggled to true
                 return verse.translations[0].text;
             }
-            return '' // if null
-
         }
-
-
-
+        else {
+            throw new Error('Error: translations fields are empty\n$verse.translations is most likely emmpty')
+        }
     }
+
+
 
     const getTransliteration = (verse) => {
 
-        /*if (verse.words) {
-            //return verse.words.map(word => word.transliteration.text).join(' ');
-        }*/
-
-        // suppose to load resource_id via settings.Language.version's id
-        if (verse.translations) {
-            return verse.translations.text
+        // this is not resourceId dependent as getChapterX loads these fields
+        if (verse.words) {
+            return verse.words.map(word => word.transliteration.text).join(' ');
+        } else {
+            throw new Error('Error: transliteration fields are empty\n$verse.transliteration is most likely empty')
         }
-
-        return '' // if null
     }
-
-
-
 
 
     return (
@@ -219,12 +211,11 @@ export default function ChapterScreen() {
 
                                                 {/* if toggled 'ON' then render */}
                                                 {settings.Language.translation && (
-                                                    <Text className="text-lg">{translation}</Text>
+                                                    <Text className='text-lg'>{translation}</Text>
                                                 )}
 
                                                 {settings.Language.transliteration && (
-
-                                                    <Text>{transliteration}</Text>
+                                                    <Text className='text-lg'>{transliteration}</Text>
                                                 )}
 
 
