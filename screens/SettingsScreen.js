@@ -143,21 +143,23 @@ export default function SettingsScreen() {
 
                                         {
                                             key === 'version' && sectionName === 'Language' ? (
-                                                settedLanguage === null ? (
+                                                isLangTranslationsLoaded === false || settedLanguage === null ? (
                                                     <View className="w-7/12">
-                                                        <Text>Please Select Language First</Text>
+                                                        <Text>Please Select Language</Text>
                                                     </View>
                                                 ) : (
-                                                    <View className="w-7/12">
-                                                        <Select
-                                                            options={exportedOptions}
-                                                            value={settedChoice}
-                                                            onSelect={(item) => handleLanguageTranslationChange(item.value)}
-                                                            onRemove={() => handleLanguageTranslationChange(null)}
-                                                        // when $lang is chosen then load options such as filteredOptions
-                                                        // handleLanguage translation get list for a language
-                                                        />
-                                                    </View>
+                                                    isLangTranslationsLoaded === true && (
+                                                        <View className="w-7/12">
+                                                            <Select
+                                                                options={exportedOptions}
+                                                                value={settedChoice}
+                                                                onSelect={(item) => handleLanguageTranslationChange(item.value)}
+                                                                onRemove={() => handleLanguageTranslationChange(null)}
+                                                            // when $lang is chosen then load options such as filteredOptions
+                                                            // handleLanguage translation get list for a language
+                                                            />
+                                                        </View>
+                                                    )
                                                 )
                                             ) : null
                                         }
@@ -176,7 +178,7 @@ export default function SettingsScreen() {
                                             </View>
 
                                         )}
-                                        {typeof value !== 'boolean' && key !== 'textSize' && key !== 'language' && (
+                                        {typeof value !== 'boolean' && key !== 'textSize' && key !== 'language' && !(sectionName === 'Language' && key === 'version') && (
                                             <Text style={{ flex: 1 }}>{String(value)}</Text>
                                         )}
                                     </View>
