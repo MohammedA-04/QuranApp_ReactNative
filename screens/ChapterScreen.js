@@ -1,8 +1,9 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { View, Text, SafeAreaView, ScrollView, Pressable, ActivityIndicator, Modal, Image } from 'react-native'
+import { View, Text, SafeAreaView, ScrollView, Pressable, ActivityIndicator, Modal, Image, Dimensions } from 'react-native'
 import { fetchChapterList, fetchChapterX, fetchChapterXpage } from '../api/quranAPI'
 import { SettingsContext } from '../SettingsContext';
 import { theme } from '../theme';
+import { Select } from '@mobile-reality/react-native-select-pro';
 
 export default function ChapterScreen() {
 
@@ -99,18 +100,78 @@ export default function ChapterScreen() {
         }
     }
 
+    const listType = [
+        { label: 'Chapters', value: 'chapters' },
+        { label: 'Juz', value: 'juz' }
+    ];
+    const [settedList, setListType] = useState(listType[0].value)
+
+    const handleListChange = (value) => {
+
+        if (value === null) {
+            setListType(listType[0].value)
+        } else {
+            // if value not null
+            setListType(value)
+        }
+
+    }
+
+    const windowWidth = Dimensions.get('window').width;
+    const dropdownWidth = windowWidth * 0.8; // 80% of window width
 
     return (
         <View className="flex-1 bg-green-200 mx-0 my-0">
             <SafeAreaView>
                 <View className="mx-2 my-2">
 
-                    <View className="p-4 rounded-lg items-center justify-center" style={{ backgroundColor: theme.bgWhite(0.6) }}>
+                    <View className="p-4 rounded-lg items-center justify-center flex-row" style={{ backgroundColor: theme.bgWhite(0.6) }}>
                         <Text>
                             <Text className="font-semibold text-lg">Surahs  </Text>
                             <Text className="text-xl">|</Text>
-                            <Text className="font-semibold text-md text-gray-500">  Chapters</Text>
+                            {/*<Text className="font-semibold text-md text-gray-500">  Chapters</Text>*/}
                         </Text>
+
+
+                        <Select
+                            options={listType}
+                            value={settedList}
+                            onSelect={(item) => handleListChange(item.value)}
+                            onRemove={() => handleListChange(null)}
+                            styles={{
+                                sectionHeader: {
+                                    container: {
+                                        backgroundColor: '#e0e0e0',
+                                        padding: 10,
+                                        borderRadius: 5,
+                                    },
+                                    text: {
+                                        fontSize: 18,
+                                        fontWeight: 'bold',
+                                    },
+                                },
+                                option: {
+                                    container: {
+                                        paddingHorizontal: 10,
+                                        minWidth: 'auto', // Ensures it adapts to content
+                                        flexWrap: 'wrap', // Allows wrapping if necessary
+                                    },
+                                    text: {
+                                        fontWeight: 'bold',
+                                    },
+                                },
+                                optionText: {
+                                    fontSize: 16,
+                                    padding: 10,
+                                },
+                                selectContainer: {
+                                    width: dropdownWidth,
+                                },
+                            }}
+
+                        />
+
+
 
                     </View>
 
