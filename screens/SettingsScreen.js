@@ -1,19 +1,17 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { View, Text, SafeAreaView, Switch, ScrollView, StatusBar } from 'react-native';
-import { Select } from '@mobile-reality/react-native-select-pro'; // Adjust import based on your Select component
+import { Select } from '@mobile-reality/react-native-select-pro'; 
 import { SettingsContext } from '../SettingsContext';
-import { textSizeOptions, languageOptions } from '../theme'; // Adjust import based on your textSizeOptions source
+import { textSizeOptions, languageOptions } from '../theme';
 import { fetchTranslations } from '../api/quranAPI';
 
 export default function SettingsScreen() {
     const { settings, toggleSetting, changeSetting } = useContext(SettingsContext);
-    const [settedTextSize, setTextSize] = useState(settings.System.textSize);
-    const [settedLanguage, setLanguage] = useState(settings.Language.language);
-
-    const [filteredOptions, setFilteredOptions] = useState([]);
-    const [exportedOptions, setExportedOptions] = useState([]);
-    const [settedChoice, setChoice] = useState(settings.System.version); // {number: 20 [en-sahih-international]}
-
+    const [settedTextSize, setTextSize] = useState(settings.System.textSize);   // text-4xl
+    const [settedLanguage, setLanguage] = useState(settings.Language.language); // 'en' 
+    const [settedChoice, setChoice] = useState(settings.System.version); // '131' for the clear quran
+    
+    const [translationsOptions, setTranslationsOptions] = useState([]);
     const [isLangTranslationsLoaded, setLangTranslationsLoaded] = useState(false);
 
     const handleTextSizeChange = (value) => {
@@ -25,30 +23,21 @@ export default function SettingsScreen() {
     // updateLanguageFunction
     const updateLanguage = async () => {
         const choices = await fetchTranslations(settedLanguage);
-        const filteredChoices = {};
-
-        // returns translationObject 
-        for (let key in choices) {
-            if (choices.hasOwnProperty(key)) {
-                filteredChoices[key] = choices[key];
-            }
-        }
-
+        
         // select component only takes {label, value}
-        const optionsArray = Object.keys(filteredChoices).map(key => ({
-            label: filteredChoices[key].name,
-            value: filteredChoices[key].id
+        const optionsArray = Object.keys(choices).map(key => ({
+            label: key,
+            value: choices[key].id
         }));
-
+        
+        console.log('choice', choices)
         console.log('Options array:', optionsArray);
 
-        // reset boht exported 
-        setExportedOptions(null);
-        setFilteredOptions(null);
+        // reset both exported 
+        setTranslationsOptions(null);
 
         // exporting to component
-        setExportedOptions(optionsArray); // Export options
-        setFilteredOptions(filteredChoices); // Export FULL CHOICE ARRAY
+        setTranslationsOptions(optionsArray); // e.g., [{lbl: TCQ, v: 131}, {... n}]
 
 
         // reset 
@@ -151,7 +140,7 @@ export default function SettingsScreen() {
                                                     isLangTranslationsLoaded === true && (
                                                         <View className="w-7/12">
                                                             <Select
-                                                                options={exportedOptions}
+                                                                options={translationsOptions}
                                                                 value={settedChoice}
                                                                 onSelect={(item) => handleLanguageTranslationChange(item.value)}
                                                                 onRemove={() => handleLanguageTranslationChange(null)}

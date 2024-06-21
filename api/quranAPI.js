@@ -123,24 +123,41 @@ export const fetchTranslations = async (language) => {
         const url = `${translations_EndPoint}?language=${lang}`
         const data = await apiCall(url);
 
-        // adding options to object
-        const translationOptions = {};
-        for (let i = 0; i < data.translations.length; i++) {
-
-        }
-        console.log('translation options: ', data);
-
-
         const translationsObject = {};
+        const languagesAvailable = new Set();
 
-        // Iterate through each property in the data objectf
+        const mySet = new Set();
+mySet.add('element1');
+mySet.add('element2');
+
+        // Iterate through each property in the data object
         for (let i = 0; i < data.translations.length; i++) {
-            if (data.translations[i].language_name === lang) {
-                translationsObject[data.translations[i].name] = data.translations[i].language_name;
+
+            // add non-dupe languages
+            const translation = data.translations[i];
+            languagesAvailable.add(translation.language_name)
+
+            // populate object if language match 
+            if (translation.language_name === lang) {
+                translationsObject[translation.name] = {
+                    language_name: translation.language_name,
+                    id: translation.id
+                };
+
             }
         }
 
-        /// console.log("translationsObj: ", translationsObject)
+        
+        /// console.log('translations return: ', translationsObject);
+        let v = Object.values(languagesAvailable);
+
+// Print each language
+console.log('Languages Available:');
+v.forEach(language => {
+    console.log(language);
+});
+
+        // returns: { TCQ: {lang: en, id: 131}, ... n}    
         return translationsObject;
 
     } catch (e) { console.log('Error:', e) }
