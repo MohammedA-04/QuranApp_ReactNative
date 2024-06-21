@@ -62,10 +62,9 @@ export const fetchAyahByKey = (verse_key, additionalParams = {}) => {
 };
 
 /* Fetch list chapters 
- * language: string
+ * language: string  [default: en]
 */
-export const fetchChapterList = (language) => {
-    const params = { language: language }
+export const fetchChapterList = () => {
     return apiCall(chapterList_EndPoint)
 }
 
@@ -124,16 +123,24 @@ export const fetchTranslations = async (language) => {
         const url = `${translations_EndPoint}?language=${lang}`
         const data = await apiCall(url);
 
+        // adding options to object
+        const translationOptions = {};
+        for (let i = 0; i < data.translations.length; i++) {
+
+        }
+        console.log('translation options: ', data);
+
+
         const translationsObject = {};
 
         // Iterate through each property in the data objectf
         for (let i = 0; i < data.translations.length; i++) {
             if (data.translations[i].language_name === lang) {
-                translationsObject[data.translations[i].name] = data.translations[i];
+                translationsObject[data.translations[i].name] = data.translations[i].language_name;
             }
         }
 
-        console.log("translationsObj: ", translationsObject)
+        /// console.log("translationsObj: ", translationsObject)
         return translationsObject;
 
     } catch (e) { console.log('Error:', e) }

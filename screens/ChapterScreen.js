@@ -18,7 +18,7 @@ export default function ChapterScreen() {
     // code logic 
     const getList = async () => {
 
-        const list = await fetchChapterList(settings.Language.language, settings.Language.version);
+        const list = await fetchChapterList();
 
         const chapterData = list.chapters.map(chapter => ({
             [chapter.name_simple]: chapter.id
