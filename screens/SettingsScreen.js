@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect } from 'react';
 import { View, Text, SafeAreaView, Switch, ScrollView, StatusBar } from 'react-native';
 import { Select } from '@mobile-reality/react-native-select-pro'; 
 import { SettingsContext } from '../SettingsContext';
-import { textSizeOptions, languageOptions } from '../theme';
+import { textSizeOptions, languageOptions, languageMap } from '../theme';
 import { fetchTranslations } from '../api/quranAPI';
 
 export default function SettingsScreen() {
@@ -142,7 +142,7 @@ export default function SettingsScreen() {
                                                             <Select
                                                                 options={translationsOptions}
                                                                 value={settedChoice}
-                                                                onSelect={(item) => handleLanguageTranslationChange(item.value)}
+                                                                onSelect={(item) => handleLanguageTranslationChange(item.value ? item.value : settedLanguage)}
                                                                 onRemove={() => handleLanguageTranslationChange(null)}
                                                             // when $lang is chosen then load options such as filteredOptions
                                                             // handleLanguage translation get list for a language

@@ -7,7 +7,7 @@ export const SettingsProvider = ({ children }) => {
         Language: {
             translation: false,
             transliteration: false,
-            language: 'en',
+            language: 'en',  
             version: '131'
         },
         System: {
