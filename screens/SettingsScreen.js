@@ -22,15 +22,19 @@ export default function SettingsScreen() {
 
     const updateLanguage = async () => {
         if (settedLanguage) {
+                     
+             // select component only takes {label, value}
             const choices = await fetchTranslations(settedLanguage);
             const optionsArray = Object.keys(choices).map(key => ({
                 label: key,
                 value: choices[key].id
             }));
 
+            // export $optionsArray and load content
             setTranslationsOptions(optionsArray);
-            setLangTranslationsLoaded(true); // Set this only after translationsOptions is updated
+            setLangTranslationsLoaded(true); 
         } else {
+            // do not load content and del options 
             setLangTranslationsLoaded(false);
             setTranslationsOptions([]);
         }
@@ -41,10 +45,12 @@ export default function SettingsScreen() {
     }, [settedLanguage]);
 
     const handleLanguageChange = async (value) => {
+
+        // reset the loaded state when language change
         setLanguage(value);
         setChoice(null);
         changeSetting('Language', 'language', value);
-        setLangTranslationsLoaded(false); // Reset the loaded state when language changes
+        setLangTranslationsLoaded(false); s
     };
 
     const handleLanguageTranslationChange = async (value) => {

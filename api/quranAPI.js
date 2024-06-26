@@ -6,6 +6,7 @@ import { languageMap, languageOptions } from '../theme';
 const BASE_URL = 'https://api.quran.com/api/v4/verses';
 const randomAyah_EndPoint = `${BASE_URL}/random`;
 const chapterList_EndPoint = 'https://api.quran.com/api/v4/chapters';
+const juzList_EndPoint = 'https://api.quran.com/api/v4/juzs';
 const chapterX_EndPoint = 'https://api.quran.com/api/v4/verses/by_chapter';
 const translations_EndPoint = 'https://api.quran.com/api/v4/resources/translations';
 
@@ -65,6 +66,17 @@ export const fetchAyahByKey = (verse_key, additionalParams = {}) => {
 */
 export const fetchChapterList = () => {
     return apiCall(chapterList_EndPoint)
+}
+
+/* Fetch juz 1 to 30
+ * schema <any>
+ */
+export const fetchJuzList = () => {
+    return apiCall(juzList_EndPoint)
+}
+
+export const fetchJuzX = (juz_num) => {
+    return apiCall(`${juzList_EndPoint}/${juz_num}`)
 }
 
 /* Fetch chapter by name

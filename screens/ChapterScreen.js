@@ -4,6 +4,7 @@ import { fetchChapterList, fetchChapterX, fetchChapterXpage } from '../api/quran
 import { SettingsContext } from '../SettingsContext';
 import { theme } from '../theme';
 import { Select } from '@mobile-reality/react-native-select-pro';
+import {JuzScreen} from './JuzScreen'
 
 export default function ChapterScreen() {
 
@@ -104,15 +105,18 @@ export default function ChapterScreen() {
         { label: 'Chapters', value: 'chapters' },
         { label: 'Juz', value: 'juz' }
     ];
+
+    // by default: we want chapters
     const [settedList, setListType] = useState(listType[0].value)
 
+    // function: to change list type
     const handleListChange = (value) => {
-
-        if (value === null) {
+        if (value === null || value === 'chapters') {
             setListType(listType[0].value)
         } else {
             // if value not null
             setListType(value)
+            return( <JuzScreen/> ) 
         }
 
     }
