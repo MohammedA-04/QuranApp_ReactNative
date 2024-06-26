@@ -20,74 +20,41 @@ export default function SettingsScreen() {
         changeSetting('System', 'textSize', value);
     };
 
-    // updateLanguageFunction
     const updateLanguage = async () => {
-        const choices = await fetchTranslations(settedLanguage);
-        
-        // select component only takes {label, value}
-        const optionsArray = Object.keys(choices).map(key => ({
-            label: key,
-            value: choices[key].id
-        }));
-        
-        console.log('choice', choices)
-        console.log('Options array:', optionsArray);
+        if (settedLanguage) {
+            const choices = await fetchTranslations(settedLanguage);
+            const optionsArray = Object.keys(choices).map(key => ({
+                label: key,
+                value: choices[key].id
+            }));
 
-        // reset both exported 
-        setTranslationsOptions(null);
-
-        // exporting to component
-        setTranslationsOptions(optionsArray); // e.g., [{lbl: TCQ, v: 131}, {... n}]
-
-
-        // reset 
-        setLangTranslationsLoaded(false)
-        setLangTranslationsLoaded(true)
-
-
-
+            setTranslationsOptions(optionsArray);
+            setLangTranslationsLoaded(true); // Set this only after translationsOptions is updated
+        } else {
+            setLangTranslationsLoaded(false);
+            setTranslationsOptions([]);
+        }
     };
 
-
-    // onRenderMonut
     useEffect(() => {
-        updateLanguage()
-    }, [])
+        updateLanguage();
+    }, [settedLanguage]);
 
-
-    useEffect(() => {
-        updateLanguage()
-    }, [settedLanguage, setChoice]);
-
-
-    // changes language and in settings.Language
     const handleLanguageChange = async (value) => {
-
-        // changing
         setLanguage(value);
-        setChoice(null)
-        // update settings
-        changeSetting('Language', 'language', value)
-
-    }
+        setChoice(null);
+        changeSetting('Language', 'language', value);
+        setLangTranslationsLoaded(false); // Reset the loaded state when language changes
+    };
 
     const handleLanguageTranslationChange = async (value) => {
-        // update language translation
-        // 1. set new choice as value 
-        // 2. then update settings 
-        // 3. trigger useEffect then render
         if (!value) {
             console.error('No value selected for translation change');
             return;
         }
 
-        console.log('Value aka translation id', value);
-
-        // value is $id from optionsArray {label: 'name', value: 'id'}
         setChoice(value);
-        changeSetting('Language', 'version', value);
-        console.log(`choice is now: ${choice} and id in setting is ${value}`)
-    };
+    }
 
 
 
@@ -130,15 +97,9 @@ export default function SettingsScreen() {
 
                                         )}
 
-                                        {
-                                            key === 'version' && sectionName === 'Language' ? (
-                                                isLangTranslationsLoaded === false || settedLanguage === null ? (
+                                        {key === 'version' && sectionName === 'Language' && (
+                                                isLangTranslationsLoaded  ? (
                                                     <View className="w-7/12">
-                                                        <Text>Please Select Language</Text>
-                                                    </View>
-                                                ) : (
-                                                    isLangTranslationsLoaded === true && (
-                                                        <View className="w-7/12">
                                                             <Select
                                                                 options={translationsOptions}
                                                                 value={settedChoice}
@@ -148,10 +109,13 @@ export default function SettingsScreen() {
                                                             // handleLanguage translation get list for a language
                                                             />
                                                         </View>
-                                                    )
+                                                ) : (
+                                                    <View className="w-7/12">
+                                                        <Text>Please Select Language</Text>
+                                                    </View>
+                                                    
                                                 )
-                                            ) : null
-                                        }
+                                            )}
 
 
 
