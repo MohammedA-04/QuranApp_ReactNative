@@ -4,7 +4,7 @@ import { fetchChapterList, fetchChapterX, fetchChapterXpage } from '../api/quran
 import { SettingsContext } from '../SettingsContext';
 import { theme } from '../theme';
 import { Select } from '@mobile-reality/react-native-select-pro';
-import { JuzComponent } from './components/JuzComponent'
+import { JuzComponent} from '../screens/components/JuzComponent'
 
 export default function ChapterScreen() {
 
@@ -111,14 +111,9 @@ export default function ChapterScreen() {
 
     // function: to change list type
     const handleListChange = (value) => {
-        if (value === null || value === 'chapters') {
-            setListType(listType[0].value)
-        } else {
-            // if value not null
-            setListType(value)
-            return (<JuzComponent />)
+        if (value){
+            setListType(value || listType[0].value);
         }
-
     }
 
     const windowWidth = Dimensions.get('window').width;
@@ -179,11 +174,12 @@ export default function ChapterScreen() {
 
                     </View>
 
+                    
                     {/* 114 Surahs List */}
                     <ScrollView vertical>
                         <View className="mt-3 pb-32">
                             { // map $list => chapter show: surah no and name
-                                list && list.map((chapter) => {
+                                settedList === 'chapters' && list && list.map((chapter) => {
 
                                     const chapterName = Object.keys(chapter)[0];
                                     const chapterId = chapter[chapterName]
@@ -203,6 +199,7 @@ export default function ChapterScreen() {
                                 })
 
                             }
+                            {settedList === 'juz' && <JuzComponent />}
                         </View>
                     </ScrollView>
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react"
-import { View, Text, ScrollView, Pressable, Modal, Image, ActivityIndicator } from 'react-native';
+import { View, Text, SafeAreaView, ScrollView, Pressable, Modal, Image, ActivityIndicator } from 'react-native';
 import { fetchJuzList, fetchJuzX } from '../../api/quranAPI';
 import { SettingsContext } from '../../SettingsContext';
 import { theme } from '../../theme/index';
@@ -7,6 +7,7 @@ import { theme } from '../../theme/index';
 const JuzComponent = ({ list }) => {
   const [juzContent, setJuzContent] = useState(null);
   const [juzList, setJuzList] = useState(null);
+  const [juzID, setJuzID] = useState(null);
   const [isModalVisible, setModalVisible] = useState(false);
 
   const { settings } = useContext(SettingsContext);
@@ -14,13 +15,42 @@ const JuzComponent = ({ list }) => {
   // function: loading juz
   useEffect(() => {
     const loadJuzList = async () => {
-      const list = await fetchJuzList();
-      setJuzList(list.juzs)
+      try {
+        let list = await fetchJuzList();
+        list = list.juzs
+        console.log('Before Juz Data: ', list);
 
-      console.log('Juz Data: ', list);
-      //const JuzData = list.
+        // before this: congreate fields if from same JUZ
+        // NOTE: API never returns list[i++] === list[i++ + 1]
+        const mergedList = [];
+        for(let i=0; i>list.length; i++){
+          console.log(list[i])
+          console.log(list[i+1])
+          if (list[i].juz_number === list[i + 1].juz_number) {
+            mergedList.push({
+              ...list[i],
+              
+              verse_mapping: { ...list[i].verse_mapping, ...list[i + 1].verse_mapping },
+              last_verse_id: Math.max(list[i].last_verse_id, list[i + 1].last_verse_id),
+              verses_count: list[i].verses_count + list[i + 1].verses_count
+            });
+            i++; // Skip the next item as we've merged it
+        } else {
+          mergedList.push(list[i]);
+        }
+      }
+        
+
+      setJuzList(mergedList)
+
+      console.log('After Juz Data: ', mergedList);
+      }catch (er){
+        console.log(er)
+      }
+      
+      
     }
-    loadJuz()
+    loadJuzList()
   }, [])
 
   const loadJuzX = async (juzId) => {
@@ -58,8 +88,8 @@ const JuzComponent = ({ list }) => {
               <View key={i} className="p-1 rounded-md">
                 <Pressable onPress={() => { loadJuzX(juz.id); setJuzID(juz.id); }}>
                   <View className="p-4 flex-row items-center rounded-xl" style={{ backgroundColor: theme.bgWhite(0.6) }}>
-                    <Text className="items-center">{juz.id}</Text>
-                    <Text className="ml-4 font-semibold text-lg">Juz {juz.id}</Text>
+                    <Text className="items-center">{i+1}</Text>
+                    <Text className="ml-4 font-semibold text-lg">Juz {juz.juz_number}</Text>
                   </View>
                 </Pressable>
               </View>
@@ -82,7 +112,7 @@ const JuzComponent = ({ list }) => {
                 <Image className="w-10 h-10" source={require('../../assets/close.png')} />
               </Pressable>
               <View className="absolute left-32 transform -translate-x-1/2">
-                <Text className="font-bold text-2xl text-center">{juzName}</Text>
+                <Text className="font-bold text-2xl text-center">Juz List</Text>
               </View>
             </View>
 
@@ -139,4 +169,4 @@ const JuzComponent = ({ list }) => {
     </View>
   );
 };
-export default JuzComponent
+export { JuzComponent}
