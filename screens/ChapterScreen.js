@@ -4,7 +4,7 @@ import { fetchChapterList, fetchChapterX, fetchChapterXpage } from '../api/quran
 import { SettingsContext } from '../SettingsContext';
 import { theme } from '../theme';
 import { Select } from '@mobile-reality/react-native-select-pro';
-import {JuzScreen} from './JuzScreen'
+import { JuzComponent } from './components/JuzComponent'
 
 export default function ChapterScreen() {
 
@@ -116,7 +116,7 @@ export default function ChapterScreen() {
         } else {
             // if value not null
             setListType(value)
-            return( <JuzScreen/> ) 
+            return (<JuzComponent />)
         }
 
     }

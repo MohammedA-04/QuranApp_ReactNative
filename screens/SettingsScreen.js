@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { View, Text, SafeAreaView, Switch, ScrollView, StatusBar } from 'react-native';
-import { Select } from '@mobile-reality/react-native-select-pro'; 
+import { Select } from '@mobile-reality/react-native-select-pro';
 import { SettingsContext } from '../SettingsContext';
 import { textSizeOptions, languageOptions, languageMap } from '../theme';
 import { fetchTranslations } from '../api/quranAPI';
@@ -10,7 +10,7 @@ export default function SettingsScreen() {
     const [settedTextSize, setTextSize] = useState(settings.System.textSize);   // text-4xl
     const [settedLanguage, setLanguage] = useState(settings.Language.language); // 'en' 
     const [settedChoice, setChoice] = useState(settings.System.version); // '131' for the clear quran
-    
+
     const [translationsOptions, setTranslationsOptions] = useState([]);
     const [isLangTranslationsLoaded, setLangTranslationsLoaded] = useState(false);
 
@@ -22,8 +22,8 @@ export default function SettingsScreen() {
 
     const updateLanguage = async () => {
         if (settedLanguage) {
-                     
-             // select component only takes {label, value}
+
+            // select component only takes {label, value}
             const choices = await fetchTranslations(settedLanguage);
             const optionsArray = Object.keys(choices).map(key => ({
                 label: key,
@@ -32,7 +32,7 @@ export default function SettingsScreen() {
 
             // export $optionsArray and load content
             setTranslationsOptions(optionsArray);
-            setLangTranslationsLoaded(true); 
+            setLangTranslationsLoaded(true);
         } else {
             // do not load content and del options 
             setLangTranslationsLoaded(false);
@@ -50,7 +50,7 @@ export default function SettingsScreen() {
         setLanguage(value);
         setChoice(null);
         changeSetting('Language', 'language', value);
-        setLangTranslationsLoaded(false); s
+        setLangTranslationsLoaded(false);
     };
 
     const handleLanguageTranslationChange = async (value) => {
@@ -104,24 +104,24 @@ export default function SettingsScreen() {
                                         )}
 
                                         {key === 'version' && sectionName === 'Language' && (
-                                                isLangTranslationsLoaded  ? (
-                                                    <View className="w-7/12">
-                                                            <Select
-                                                                options={translationsOptions}
-                                                                value={settedChoice}
-                                                                onSelect={(item) => handleLanguageTranslationChange(item.value ? item.value : settedLanguage)}
-                                                                onRemove={() => handleLanguageTranslationChange(null)}
-                                                            // when $lang is chosen then load options such as filteredOptions
-                                                            // handleLanguage translation get list for a language
-                                                            />
-                                                        </View>
-                                                ) : (
-                                                    <View className="w-7/12">
-                                                        <Text>Please Select Language</Text>
-                                                    </View>
-                                                    
-                                                )
-                                            )}
+                                            isLangTranslationsLoaded ? (
+                                                <View className="w-7/12">
+                                                    <Select
+                                                        options={translationsOptions}
+                                                        value={settedChoice}
+                                                        onSelect={(item) => handleLanguageTranslationChange(item.value ? item.value : settedLanguage)}
+                                                        onRemove={() => handleLanguageTranslationChange(null)}
+                                                    // when $lang is chosen then load options such as filteredOptions
+                                                    // handleLanguage translation get list for a language
+                                                    />
+                                                </View>
+                                            ) : (
+                                                <View className="w-7/12">
+                                                    <Text>Please Select Language</Text>
+                                                </View>
+
+                                            )
+                                        )}
 
 
 

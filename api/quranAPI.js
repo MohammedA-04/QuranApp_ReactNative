@@ -75,8 +75,21 @@ export const fetchJuzList = () => {
     return apiCall(juzList_EndPoint)
 }
 
-export const fetchJuzX = (juz_num) => {
-    return apiCall(`${juzList_EndPoint}/${juz_num}`)
+/* Fetch Juz by name 
+ * @param | juz_number: number [required]
+ * @param | text_uthmani: string
+ * @parma | translations: query (id: number)
+ * @param | language: string
+*/
+export const fetchJuzX = (juz_number) => {
+    const params = {
+        language: language,
+        translations: translation,
+        words: true,
+        fields: 'text_uthmani'
+    }
+    const url = `${juzList_EndPoint}/${juz_number}`
+    return apiCall(url, params)
 }
 
 /* Fetch chapter by name
@@ -119,7 +132,7 @@ export const fetchTranslations = async (language) => {
     // 2 call api using this
     // 3 before return filter data by language_name  
 
-    console.log('passed down prop:' ,language)
+    console.log('passed down prop:', language)
 
     try {
         const url = `${translations_EndPoint}?language=${language}`
@@ -127,7 +140,7 @@ export const fetchTranslations = async (language) => {
         console.log(data)
 
         const translationsObject = {};
-        const languagesAvailable = new Set(); 
+        const languagesAvailable = new Set();
 
         // Iterate through each property in the data object
         for (let i = 0; i < data.translations.length; i++) {
@@ -150,10 +163,10 @@ export const fetchTranslations = async (language) => {
             }
         }
 
-        
-         console.log('translations return: ', translationsObject);
-         console.log('language available:', Array.from(languagesAvailable))
-        
+
+        console.log('translations return: ', translationsObject);
+        console.log('language available:', Array.from(languagesAvailable))
+
 
         // returns: { TCQ: {lang: en, id: 131}, ... n}    
         return translationsObject;
