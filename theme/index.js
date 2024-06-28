@@ -155,3 +155,39 @@ export const languageMap = {
     'Divehi': 'dv'
 };
 
+export const juzList = [
+    { juz_number: 1, juz_name: "Alif Lam Meem" },
+    { juz_number: 2, juz_name: "Sayaqool" },
+    { juz_number: 3, juz_name: "Tilka 'r-Rusul" },
+    { juz_number: 4, juz_name: "Lan Tana Loo" },
+    { juz_number: 5, juz_name: "Wal Mohsanat" },
+    { juz_number: 6, juz_name: "Ya Ayyuha 'lladhina Amanoo" },
+    { juz_number: 7, juz_name: "Wa Iza Sami'u" },
+    { juz_number: 8, juz_name: "Wa Lau Annana" },
+    { juz_number: 9, juz_name: "Qad Aflaha" },
+    { juz_number: 10, juz_name: "Wa A'lamu" },
+    { juz_number: 11, juz_name: "Yatazeroon" },
+    { juz_number: 12, juz_name: "Wa Mamin Da'abat" },
+    { juz_number: 13, juz_name: "Wa Ma Ubarri'u" },
+    { juz_number: 14, juz_name: "Rubama" },
+    { juz_number: 15, juz_name: "Subhanalladhi" },
+    { juz_number: 16, juz_name: "Qal Alam" },
+    { juz_number: 17, juz_name: "Iqtarabat" },
+    { juz_number: 18, juz_name: "Qadd Aflaha" },
+    { juz_number: 19, juz_name: "Wa Qalalladhina" },
+    { juz_number: 20, juz_name: "A'man Khalaqa" },
+    { juz_number: 21, juz_name: "Utlu Ma Oohi" },
+    { juz_number: 22, juz_name: "Wa Manyaqnut" },
+    { juz_number: 23, juz_name: "Wa Mali" },
+    { juz_number: 24, juz_name: "Faman Azlam" },
+    { juz_number: 25, juz_name: "Ilaihi Yuraddu" },
+    { juz_number: 26, juz_name: "Ha Meem" },
+    { juz_number: 27, juz_name: "Qala Fama Khatbukum" },
+    { juz_number: 28, juz_name: "Qad Aflaha" },
+    { juz_number: 29, juz_name: "Tabarakalladhi" },
+    { juz_number: 30, juz_name: "Amma Yatasa'aloon" }
+  ];
+  
+  console.log(juzList);
+  
+

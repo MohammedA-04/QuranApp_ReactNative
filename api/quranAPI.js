@@ -6,7 +6,7 @@ import { languageMap, languageOptions } from '../theme';
 const BASE_URL = 'https://api.quran.com/api/v4/verses';
 const randomAyah_EndPoint = `${BASE_URL}/random`;
 const chapterList_EndPoint = 'https://api.quran.com/api/v4/chapters';
-const juzList_EndPoint = 'https://api.quran.com/api/v4/juzs';
+const juzX_EndPoint = 'https://api.quran.com/api/v4/verses/by_juz'
 const chapterX_EndPoint = 'https://api.quran.com/api/v4/verses/by_chapter';
 const translations_EndPoint = 'https://api.quran.com/api/v4/resources/translations';
 
@@ -68,6 +68,7 @@ export const fetchChapterList = () => {
     return apiCall(chapterList_EndPoint)
 }
 
+// ! Deprecated: API is not setup complete by API Provider
 /* Fetch juz 1 to 30
  * schema <any>
  */
@@ -80,15 +81,18 @@ export const fetchJuzList = () => {
  * @param | text_uthmani: string
  * @parma | translations: query (id: number)
  * @param | language: string
+ * @param | per_page: number (default 10)
 */
-export const fetchJuzX = (juz_number) => {
+export const fetchJuzX = (juz_number, language, translation) => {
     const params = {
         language: language,
         translations: translation,
         words: true,
-        fields: 'text_uthmani'
+        fields: 'text_uthmani',
+        per_page: 50
     }
-    const url = `${juzList_EndPoint}/${juz_number}`
+
+    const url = `${juzX_EndPoint}/${juz_number}` 
     return apiCall(url, params)
 }
 

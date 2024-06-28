@@ -2,60 +2,24 @@ import React, { useState, useEffect, useContext } from "react"
 import { View, Text, SafeAreaView, ScrollView, Pressable, Modal, Image, ActivityIndicator } from 'react-native';
 import { fetchJuzList, fetchJuzX } from '../../api/quranAPI';
 import { SettingsContext } from '../../SettingsContext';
-import { theme } from '../../theme/index';
+import { theme, juzList } from '../../theme/index';
 
 const JuzComponent = ({ list }) => {
   const [juzContent, setJuzContent] = useState(null);
-  const [juzList, setJuzList] = useState(null);
-  const [juzID, setJuzID] = useState(null);
   const [isModalVisible, setModalVisible] = useState(false);
 
   const { settings } = useContext(SettingsContext);
 
-  // function: loading juz
-  useEffect(() => {
-    const loadJuzList = async () => {
-      try {
-        let list = await fetchJuzList();
-        list = list.juzs
-        console.log('Before Juz Data: ', list);
-
-        // before this: congreate fields if from same JUZ
-        // NOTE: API never returns list[i++] === list[i++ + 1]
-        const mergedList = [];
-        let tmpList = [];
-
-        for (let i = 0; i < list.length; i++) {
-
-          tmpList.push(list[i]);
-
-          // check if next element has different juzId | OR | if last element of list
-          if (i === list.length - 1 || list[i].juz_number !== list[i + 1].juz_number) {
-            // then 
-            mergedList.push(tmpList);
-            tmpList = [];
-          }
-        }
-
-        console.log('After Juz Data: ', mergedList);
-        debugger;
-        setJuzList(mergedList)
-
-
-      } catch (er) {
-        console.log(er)
-      }
-    }
-    loadJuzList()
-  }, [])
-
-  const loadJuzX = async (juzId) => {
-    const juzX = await fetchJuzX(juzId);
-
+  // ! @Issue: API provider not having usable to id to get Juz with
+  // * @Param | juzNum: number (of Juz)
+  const loadJuzX = async (juzNum) => {
+    const juzX = await fetchJuzX(juzNum, settings.Language.language, settings.Language.version);
+    
     setJuzContent(juzX);
     setModalVisible(true);
   }
 
+  // TODO: Fix later
   const getTranslation = (verse) => {
     if (verse.translations) {
       return verse.translations[0].text;
@@ -64,6 +28,7 @@ const JuzComponent = ({ list }) => {
     }
   }
 
+  // TODO: Fix later
   const getTransliteration = (verse) => {
     if (verse.words) {
       return verse.words.map(word => word.transliteration.text).join(' ');
@@ -80,12 +45,13 @@ const JuzComponent = ({ list }) => {
       <ScrollView vertical>
         <View className="mt-3 pb-32">
           {juzList && juzList.map((juz, i) => {
+            console.log(juz.juz_number)
             return (
               <View key={i} className="p-1 rounded-md ">
-                <Pressable onPress={() => { loadJuzX(juz.id); setJuzID(juz.id); }}>
+                <Pressable onPress={() => { loadJuzX(juz.juz_number); {/* passing juz as num to juz/${juz_num} */} }}>
                   <View className="p-4 flex-row items-center rounded-xl" style={{ backgroundColor: theme.bgWhite(0.6) }}>
-                    <Text className="items-center">{juz[0].juz_number}</Text>
-                    <Text className="ml-4 font-semibold text-lg">Juz Name{juz[0].juz_number}</Text>
+                    <Text className="items-center">{juz.juz_number}</Text>
+                    <Text className="ml-4 font-semibold text-lg">Juz {juz.juz_name}</Text>
                   </View>
                 </Pressable>
               </View>
