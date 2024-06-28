@@ -23,32 +23,28 @@ const JuzComponent = ({ list }) => {
         // before this: congreate fields if from same JUZ
         // NOTE: API never returns list[i++] === list[i++ + 1]
         const mergedList = [];
-        for(let i=0; i>list.length; i++){
-          console.log(list[i])
-          console.log(list[i+1])
-          if (list[i].juz_number === list[i + 1].juz_number) {
-            mergedList.push({
-              ...list[i],
-              
-              verse_mapping: { ...list[i].verse_mapping, ...list[i + 1].verse_mapping },
-              last_verse_id: Math.max(list[i].last_verse_id, list[i + 1].last_verse_id),
-              verses_count: list[i].verses_count + list[i + 1].verses_count
-            });
-            i++; // Skip the next item as we've merged it
-        } else {
-          mergedList.push(list[i]);
+        let tmpList = [];
+
+        for (let i = 0; i < list.length; i++) {
+
+          tmpList.push(list[i]);
+
+          // check if next element has different juzId | OR | if last element of list
+          if (i === list.length - 1 || list[i].juz_number !== list[i + 1].juz_number) {
+            // then 
+            mergedList.push(tmpList);
+            tmpList = [];
+          }
         }
-      }
-        
 
-      setJuzList(mergedList)
+        console.log('After Juz Data: ', mergedList);
+        debugger;
+        setJuzList(mergedList)
 
-      console.log('After Juz Data: ', mergedList);
-      }catch (er){
+
+      } catch (er) {
         console.log(er)
       }
-      
-      
     }
     loadJuzList()
   }, [])
@@ -85,11 +81,11 @@ const JuzComponent = ({ list }) => {
         <View className="mt-3 pb-32">
           {juzList && juzList.map((juz, i) => {
             return (
-              <View key={i} className="p-1 rounded-md">
+              <View key={i} className="p-1 rounded-md ">
                 <Pressable onPress={() => { loadJuzX(juz.id); setJuzID(juz.id); }}>
                   <View className="p-4 flex-row items-center rounded-xl" style={{ backgroundColor: theme.bgWhite(0.6) }}>
-                    <Text className="items-center">{i+1}</Text>
-                    <Text className="ml-4 font-semibold text-lg">Juz {juz.juz_number}</Text>
+                    <Text className="items-center">{juz[0].juz_number}</Text>
+                    <Text className="ml-4 font-semibold text-lg">Juz Name{juz[0].juz_number}</Text>
                   </View>
                 </Pressable>
               </View>
@@ -169,4 +165,4 @@ const JuzComponent = ({ list }) => {
     </View>
   );
 };
-export { JuzComponent}
+export { JuzComponent }
