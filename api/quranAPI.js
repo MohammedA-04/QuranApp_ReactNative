@@ -83,13 +83,14 @@ export const fetchJuzList = () => {
  * @param | language: string
  * @param | per_page: number (default 10)
 */
-export const fetchJuzX = (juz_number, language, translation) => {
+export const fetchJuzX = (juz_number, page, language, translation) => {
     const params = {
         language: language,
         translations: translation,
         words: true,
         fields: 'text_uthmani',
-        per_page: 50
+        per_page: 50,
+        page: page ? page : 0
     }
 
     const url = `${juzX_EndPoint}/${juz_number}` 

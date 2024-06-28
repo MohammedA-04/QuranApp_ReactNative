@@ -7,6 +7,8 @@ import { theme, juzList } from '../../theme/index';
 const JuzComponent = ({ list }) => {
   const [juzContent, setJuzContent] = useState(null);
   const [isModalVisible, setModalVisible] = useState(false);
+  const [choosenJuzName, setChoosenJuzName] = useState(null);
+  const [choosenJuzNum, setChoosenJuzNum] = useState(null);
 
   const { settings } = useContext(SettingsContext);
 
@@ -37,6 +39,30 @@ const JuzComponent = ({ list }) => {
     }
   }
 
+  // onPress <Pressable> => check if current - 1 >  0
+  const previousPageInJuz = async (juz_num, currentPG) => {
+
+    if (currentPG - 1 > 0) {
+        setJuzContent(null)
+        currentPG = currentPG - 1;
+        const juz = await fetchJuzX(juz_num, currentPG, settings.Language.language, settings.Language.version);
+        setJuzContent(juz)
+
+    }
+
+}
+
+// onPress <Pressable> => check if current < maxPG then change page
+const nextPageInJuz = async (juz_num, currentPG, maxPG) => {
+
+    if (currentPG !== maxPG) {
+        setJuzContent(null); // due to shows <activity indicator/>
+        currentPG = currentPG + 1;
+        const juz = await fetchJuzX(juz_num, currentPG, settings.Language.language, settings.Language.version);
+        setJuzContent(juz);
+    }
+};
+
 
   return (
     <View>
@@ -48,7 +74,7 @@ const JuzComponent = ({ list }) => {
             console.log(juz.juz_number)
             return (
               <View key={i} className="p-1 rounded-md ">
-                <Pressable onPress={() => { loadJuzX(juz.juz_number); {/* passing juz as num to juz/${juz_num} */} }}>
+                <Pressable onPress={() => { loadJuzX(juz.juz_number); {/* passing juz as num to juz/${juz_num} */} setChoosenJuzName(juz.juz_name); setChoosenJuzNum(juz.juz_number);}}>
                   <View className="p-4 flex-row items-center rounded-xl" style={{ backgroundColor: theme.bgWhite(0.6) }}>
                     <Text className="items-center">{juz.juz_number}</Text>
                     <Text className="ml-4 font-semibold text-lg">Juz {juz.juz_name}</Text>
@@ -74,7 +100,7 @@ const JuzComponent = ({ list }) => {
                 <Image className="w-10 h-10" source={require('../../assets/close.png')} />
               </Pressable>
               <View className="absolute left-32 transform -translate-x-1/2">
-                <Text className="font-bold text-2xl text-center">Juz List</Text>
+                <Text className="font-bold text-2xl text-center">Juz {choosenJuzName}</Text>
               </View>
             </View>
 
@@ -119,6 +145,29 @@ const JuzComponent = ({ list }) => {
                       </View>
                     );
                   })}
+
+                  {/* page info and next, prev page */}
+                  <View className="flex items-center justify-center mx-10 border-t-2 border-black pb-48">
+                                        <View className="flex-row items-center space-x-2 mt-4">
+
+                                            <View className="right-4 rounded-md bg-red-400 p-2">
+                                                <Pressable onPress={() => previousPageInJuz(choosenJuzNum, juzContent.pagination.current_page)}>
+                                                    <Text className="text-white font-semibold">Prev Page</Text>
+                                                </Pressable>
+                                            </View>
+
+                                            <Text className="font-medium text-xl">{juzContent.pagination.current_page} out of {juzContent.pagination.total_pages}</Text>
+
+                                            <View className="left-4 rounded-md bg-lime-500 p-2">
+                                                <Pressable onPress={() => nextPageInJuz(choosenJuzNum, juzContent.pagination.current_page, juzContent.pagination.total_pages)}>
+                                                    <Text className=" text-gray-50 font-semibold">Next Page</Text>
+                                                </Pressable>
+                                            </View>
+
+
+                                        </View>
+                                    </View>
+
                 </ScrollView>
               </View>
             )}
