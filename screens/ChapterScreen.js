@@ -4,7 +4,7 @@ import { fetchChapterList, fetchChapterX, fetchChapterXpage } from '../api/quran
 import { SettingsContext } from '../SettingsContext';
 import { theme } from '../theme';
 import { Select } from '@mobile-reality/react-native-select-pro';
-import { JuzComponent} from '../screens/components/JuzComponent'
+import { JuzComponent } from '../screens/components/JuzComponent'
 
 export default function ChapterScreen() {
 
@@ -75,19 +75,41 @@ export default function ChapterScreen() {
     const getTranslation = (verse) => {
 
         // check possible null entry
-        if (verse.translations) {
-            if (settings.Language.translation === true && settings.Language.language === true && settings.System.version === true) {
-                return verse.translations[0].text;
+        console.log('verse', verse)
 
-            } else if (settings.Language.translation === true) {
-                // e.g., if condiiton fails, we want situation where toggled to true
-                return verse.translations[0].text;
+
+        /**
+         * if: translations, language, version not null
+         *      if: verse.translations[0].text not null
+         *          return verse.translations[0].text
+         * else if: translation
+         *  return verse.words[0].translation.text
+         * 
+         * else: throw new Erorr
+         * 
+         */
+        console.log(`t is: ${settings.Language.language} and v is: ${settings.Language.version}`);
+        console.log(`verse.translations[0].text: ${verse.translations[0].text} `)
+
+        if (settings.Language.translation === true && settings.Language.language !== null && settings.System.version !== null) {
+            return verse.translations[0].text;
+
+        }
+        else if (settings.Language.translation === true) {
+            // e.g., if condiiton fails, we want situation where toggled to true
+            if (verse.words) {
+                return verse.words.map(word => word.translation.text).join(' ');
             }
+
+        }
+        else if (settings.Language.translation !== true || settings.Language.language !== true || settings.System.version !== true) {
+            return ''
         }
         else {
             throw new Error('Error: translations fields are empty\n$verse.translations is most likely emmpty')
         }
     }
+
 
 
 
@@ -111,7 +133,7 @@ export default function ChapterScreen() {
 
     // function: to change list type
     const handleListChange = (value) => {
-        if (value){
+        if (value) {
             setListType(value || listType[0].value);
         }
     }
@@ -174,7 +196,7 @@ export default function ChapterScreen() {
 
                     </View>
 
-                    
+
                     {/* 114 Surahs List */}
                     <ScrollView vertical>
                         <View className="mt-3 pb-32">
@@ -199,7 +221,13 @@ export default function ChapterScreen() {
                                 })
 
                             }
-                            {settedList === 'juz' && <JuzComponent />}
+                            {settedList === 'juz' &&
+                                <JuzComponent
+                                    lang={settings.Language.language}
+                                    ver={settings.Language.version}
+                                    tr={settings.Language.translation}
+                                    translit={settings.Language.transliteration}
+                                />}
                         </View>
                     </ScrollView>
 

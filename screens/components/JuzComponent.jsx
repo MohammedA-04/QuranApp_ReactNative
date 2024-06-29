@@ -4,7 +4,7 @@ import { fetchJuzList, fetchJuzX } from '../../api/quranAPI';
 import { SettingsContext } from '../../SettingsContext';
 import { theme, juzList } from '../../theme/index';
 
-const JuzComponent = ({ list }) => {
+const JuzComponent = ({ lang, ver, tr, translit }) => {
   const [juzContent, setJuzContent] = useState(null);
   const [isModalVisible, setModalVisible] = useState(false);
   const [choosenJuzName, setChoosenJuzName] = useState(null);
@@ -15,20 +15,52 @@ const JuzComponent = ({ list }) => {
   // ! @Issue: API provider not having usable to id to get Juz with
   // * @Param | juzNum: number (of Juz)
   const loadJuzX = async (juzNum) => {
-    const juzX = await fetchJuzX(juzNum, settings.Language.language, settings.Language.version);
-    
+    const juzX = await fetchJuzX(juzNum, 0, lang, ver);
+    console.log(`juzX: ${juzX}`)
+
     setJuzContent(juzX);
     setModalVisible(true);
   }
 
   // TODO: Fix later
   const getTranslation = (verse) => {
-    if (verse.translations) {
+
+    // check possible null entry
+    console.log('verse', verse)
+
+
+    /**
+     * if: translations, language, version not null
+     *      if: verse.translations[0].text not null
+     *          return verse.translations[0].text
+     * else if: translation
+     *  return verse.words[0].translation.text
+     * 
+     * else: throw new Erorr
+     * 
+     */
+    console.log(`t is: ${lang} and v is: ${ver}`);
+    console.log(`verse.translations[0].text: ${verse} `)
+
+    if (tr === true && lang !== null && ver !== null) {
       return verse.translations[0].text;
-    } else {
-      return 'No translation available';
+
+    }
+    else if (tr === true) {
+      // e.g., if condiiton fails, we want situation where toggled to true
+      if (verse.words) {
+        return verse.words.map(word => word.translation.text).join(' ');
+      }
+
+    }
+    else if (tr !== true || lang !== true || ver !== true) {
+      return ''
+    }
+    else {
+      throw new Error('Error: translations fields are empty\n$verse.translations is most likely emmpty')
     }
   }
+
 
   // TODO: Fix later
   const getTransliteration = (verse) => {
@@ -43,25 +75,26 @@ const JuzComponent = ({ list }) => {
   const previousPageInJuz = async (juz_num, currentPG) => {
 
     if (currentPG - 1 > 0) {
-        setJuzContent(null)
-        currentPG = currentPG - 1;
-        const juz = await fetchJuzX(juz_num, currentPG, settings.Language.language, settings.Language.version);
-        setJuzContent(juz)
+      setJuzContent(null)
+      currentPG = currentPG - 1;
+      const juz = await fetchJuzX(juz_num, currentPG, lang, ver);
+      setJuzContent(juz)
 
     }
 
-}
+  }
 
-// onPress <Pressable> => check if current < maxPG then change page
-const nextPageInJuz = async (juz_num, currentPG, maxPG) => {
+  // onPress <Pressable> => check if current < maxPG then change page
+  const nextPageInJuz = async (juz_num, currentPG, maxPG) => {
 
     if (currentPG !== maxPG) {
-        setJuzContent(null); // due to shows <activity indicator/>
-        currentPG = currentPG + 1;
-        const juz = await fetchJuzX(juz_num, currentPG, settings.Language.language, settings.Language.version);
-        setJuzContent(juz);
+      setJuzContent(null); // due to shows <activity indicator/>
+      currentPG = currentPG + 1;
+      const juz = await fetchJuzX(juz_num, currentPG, lang, ver);
+      setJuzContent(juz);
     }
-};
+  };
+
 
 
   return (
@@ -74,7 +107,7 @@ const nextPageInJuz = async (juz_num, currentPG, maxPG) => {
             console.log(juz.juz_number)
             return (
               <View key={i} className="p-1 rounded-md ">
-                <Pressable onPress={() => { loadJuzX(juz.juz_number); {/* passing juz as num to juz/${juz_num} */} setChoosenJuzName(juz.juz_name); setChoosenJuzNum(juz.juz_number);}}>
+                <Pressable onPress={() => { loadJuzX(juz.juz_number); {/* passing juz as num to juz/${juz_num} */ } setChoosenJuzName(juz.juz_name); setChoosenJuzNum(juz.juz_number); }}>
                   <View className="p-4 flex-row items-center rounded-xl" style={{ backgroundColor: theme.bgWhite(0.6) }}>
                     <Text className="items-center">{juz.juz_number}</Text>
                     <Text className="ml-4 font-semibold text-lg">Juz {juz.juz_name}</Text>
@@ -135,11 +168,11 @@ const nextPageInJuz = async (juz_num, currentPG, maxPG) => {
                           </View>
                         </View>
 
-                        {settings.Language.translation && (
+                        {tr && (
                           <Text className='text-lg'>{translation}</Text>
                         )}
 
-                        {settings.Language.transliteration && (
+                        {translit && (
                           <Text className='text-lg'>{transliteration}</Text>
                         )}
                       </View>
@@ -148,25 +181,25 @@ const nextPageInJuz = async (juz_num, currentPG, maxPG) => {
 
                   {/* page info and next, prev page */}
                   <View className="flex items-center justify-center mx-10 border-t-2 border-black pb-48">
-                                        <View className="flex-row items-center space-x-2 mt-4">
+                    <View className="flex-row items-center space-x-2 mt-4">
 
-                                            <View className="right-4 rounded-md bg-red-400 p-2">
-                                                <Pressable onPress={() => previousPageInJuz(choosenJuzNum, juzContent.pagination.current_page)}>
-                                                    <Text className="text-white font-semibold">Prev Page</Text>
-                                                </Pressable>
-                                            </View>
+                      <View className="right-4 rounded-md bg-red-400 p-2">
+                        <Pressable onPress={() => previousPageInJuz(choosenJuzNum, juzContent.pagination.current_page)}>
+                          <Text className="text-white font-semibold">Prev Page</Text>
+                        </Pressable>
+                      </View>
 
-                                            <Text className="font-medium text-xl">{juzContent.pagination.current_page} out of {juzContent.pagination.total_pages}</Text>
+                      <Text className="font-medium text-xl">{juzContent.pagination.current_page} out of {juzContent.pagination.total_pages}</Text>
 
-                                            <View className="left-4 rounded-md bg-lime-500 p-2">
-                                                <Pressable onPress={() => nextPageInJuz(choosenJuzNum, juzContent.pagination.current_page, juzContent.pagination.total_pages)}>
-                                                    <Text className=" text-gray-50 font-semibold">Next Page</Text>
-                                                </Pressable>
-                                            </View>
+                      <View className="left-4 rounded-md bg-lime-500 p-2">
+                        <Pressable onPress={() => nextPageInJuz(choosenJuzNum, juzContent.pagination.current_page, juzContent.pagination.total_pages)}>
+                          <Text className=" text-gray-50 font-semibold">Next Page</Text>
+                        </Pressable>
+                      </View>
 
 
-                                        </View>
-                                    </View>
+                    </View>
+                  </View>
 
                 </ScrollView>
               </View>

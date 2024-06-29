@@ -8,8 +8,9 @@ import { fetchTranslations } from '../api/quranAPI';
 export default function SettingsScreen() {
     const { settings, toggleSetting, changeSetting } = useContext(SettingsContext);
     const [settedTextSize, setTextSize] = useState(settings.System.textSize);   // text-4xl
-    const [settedLanguage, setLanguage] = useState(settings.Language.language); // 'en' 
-    const [settedChoice, setChoice] = useState(settings.System.version); // '131' for the clear quran
+    const [settedLanguage, setLanguage] = useState(null); // 'en' 
+    const [settedChoice, setChoice] = useState(null); // '131' for the clear quran
+
 
     const [translationsOptions, setTranslationsOptions] = useState([]);
     const [isLangTranslationsLoaded, setLangTranslationsLoaded] = useState(false);
@@ -47,23 +48,51 @@ export default function SettingsScreen() {
     const handleLanguageChange = async (value) => {
 
         // reset the loaded state when language change
-        setLanguage(value);
-        setChoice(null);
-        changeSetting('Language', 'language', value);
-        setLangTranslationsLoaded(false);
+        if (value !== null) {
+            setLanguage(value);
+            console.log('choosen lang:', value)
+            changeSetting('Language', 'language', value);
+            changeSetting('Language', 'version', null);
+            setLangTranslationsLoaded(false);
+
+        } else if (value === null) {
+            setLanguage(null);
+            setChoice(null);
+            changeSetting('Language', 'language', null);
+            changeSetting('Language', 'version', null);
+            setLangTranslationsLoaded(false);
+        }
+
+
     };
 
     const handleLanguageTranslationChange = async (value) => {
-        if (!value) {
-            console.error('No value selected for translation change');
+
+        if (value !== null) {
+            setChoice(value);
+            changeSetting('Language', 'version', value)
+        } else if (value === null) {
+            setChoice(null);
+            changeSetting('Language', 'version', null)
             return;
+        } else {
+            throw new Error('No value selected for translation change')
         }
 
-        setChoice(value);
+
     }
 
 
+    const checkSettings = () => {
+        console.log('translation toggle: ', settings.Language.translation);
+        console.log('language', settings.Language.language)
+        console.log('version: ', settings.Language.version);
+    }
 
+    // Add a useEffect to check settings after changes
+    useEffect(() => {
+        checkSettings();
+    }, [settings]);
 
 
 
