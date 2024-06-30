@@ -124,8 +124,8 @@ export default function ChapterScreen() {
     }
 
     const listType = [
-        { label: 'Chapters', value: 'chapters' },
-        { label: 'Juz', value: 'juz' }
+        { label: 'Chapters', value: 'Chapters' },
+        { label: 'Juz', value: 'Juz' }
     ];
 
     // by default: we want chapters
@@ -139,7 +139,7 @@ export default function ChapterScreen() {
     }
 
     const windowWidth = Dimensions.get('window').width;
-    const dropdownWidth = windowWidth * 0.8; // 80% of window width
+    const dropdownWidth = windowWidth * 0.9; // 80% of window width
 
     return (
         <View className="flex-1 bg-green-200 mx-0 my-0">
@@ -148,49 +148,42 @@ export default function ChapterScreen() {
 
                     <View className="p-4 rounded-lg items-center justify-center flex-row" style={{ backgroundColor: theme.bgWhite(0.6) }}>
                         <Text>
-                            <Text className="font-semibold text-lg">Surahs  </Text>
+                            <Text className="font-semibold text-lg">{settedList ? settedList : 'Chapters'}  </Text>
                             <Text className="text-xl">|</Text>
                             {/*<Text className="font-semibold text-md text-gray-500">  Chapters</Text>*/}
                         </Text>
 
-
-                        <Select
+                        <View className='ml-4 w-1/2'>
+                            <Select
                             options={listType}
                             value={settedList}
                             onSelect={(item) => handleListChange(item.value)}
                             onRemove={() => handleListChange(null)}
-                            styles={{
-                                sectionHeader: {
-                                    container: {
-                                        backgroundColor: '#e0e0e0',
-                                        padding: 10,
-                                        borderRadius: 5,
-                                    },
-                                    text: {
-                                        fontSize: 18,
-                                        fontWeight: 'bold',
-                                    },
-                                },
+                            styles={{  
+
+                                // color background onclick
+                                backdrop:{backgroundColor: theme.bgGray(0.4)},
+
                                 option: {
                                     container: {
-                                        paddingHorizontal: 10,
-                                        minWidth: 'auto', // Ensures it adapts to content
-                                        flexWrap: 'wrap', // Allows wrapping if necessary
+                                        paddingHorizontal: 10, paddingRight: 10, padding: 10, 
+                                        width: 400, height: 50, flexWrap: 'wrap', // Allows wrapping if necessary
                                     },
-                                    text: {
-                                        fontWeight: 'bold',
-                                    },
+                                    text: {fontWeight: 'bold',},
+                                    selected :{
+                                        container: { backgroundColor: theme.bgGray(0.6)},
+                                        text: {color: theme.bgWhite(1)}
+                                    }
                                 },
-                                optionText: {
-                                    fontSize: 16,
-                                    padding: 10,
-                                },
-                                selectContainer: {
-                                    width: dropdownWidth,
-                                },
+                                optionText: {fontSize: 16, padding: 10,},
+                                selectContainer: {width: dropdownWidth},
+                                sectionHeader:{text:{fontWeight: 'bold'}}
+                                
                             }}
 
                         />
+                        </View>
+                        
 
 
 
@@ -201,7 +194,7 @@ export default function ChapterScreen() {
                     <ScrollView vertical>
                         <View className="mt-3 pb-32">
                             { // map $list => chapter show: surah no and name
-                                settedList === 'chapters' && list && list.map((chapter) => {
+                                settedList === 'Chapters' && list && list.map((chapter) => {
 
                                     const chapterName = Object.keys(chapter)[0];
                                     const chapterId = chapter[chapterName]
@@ -221,7 +214,7 @@ export default function ChapterScreen() {
                                 })
 
                             }
-                            {settedList === 'juz' &&
+                            {settedList === 'Juz' &&
                                 <JuzComponent
                                     lang={settings.Language.language}
                                     ver={settings.Language.version}
