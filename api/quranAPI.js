@@ -8,6 +8,7 @@ const randomAyah_EndPoint = `${BASE_URL}/random`;
 const chapterList_EndPoint = 'https://api.quran.com/api/v4/chapters';
 const juzX_EndPoint = 'https://api.quran.com/api/v4/verses/by_juz'
 const chapterX_EndPoint = 'https://api.quran.com/api/v4/verses/by_chapter';
+const chapterInfo_EndPoint = 'https://api.quran.com/api/v4/chapters/'
 const translations_EndPoint = 'https://api.quran.com/api/v4/resources/translations';
 
 
@@ -93,7 +94,7 @@ export const fetchJuzX = (juz_number, page, language, translation) => {
         page: page ? page : 0
     }
 
-    const url = `${juzX_EndPoint}/${juz_number}` 
+    const url = `${juzX_EndPoint}/${juz_number}`
     return apiCall(url, params)
 }
 
@@ -125,6 +126,20 @@ export const fetchChapterXpage = (chapter_number, page, language, translation) =
     }
     const url = `${chapterX_EndPoint}/${chapter_number}`
     return apiCall(url, params)
+}
+
+/* Fetches information/desc for chapter 
+ * @param | id [required] (1-114)
+ * @param | langauge [default: en] (ISO 639-2 standard)
+*/
+export const fetchChapterInfo = async (id) => {
+
+    /*const params = {
+        //language: language ? language : 'en',
+    }*/
+    const url = `${chapterInfo_EndPoint}/${id}/info`
+    return apiCall(url)
+
 }
 
 
@@ -178,3 +193,4 @@ export const fetchTranslations = async (language) => {
 
     } catch (e) { console.log('Error:', e) }
 }
+

@@ -180,7 +180,7 @@ const JuzComponent = ({ lang, ver, tr, translit, textSize }) => {
                   })}
 
                   {/* page info and next, prev page */}
-                  <View className="flex items-center justify-center mx-10 border-t-2 border-black pb-48">
+                  <View className="flex items-center justify-center mx-10 border-t-2 border-black pb-52">
                     <View className="flex-row items-center space-x-2 mt-4">
 
                       <View className="right-4 rounded-md bg-red-400 p-2">

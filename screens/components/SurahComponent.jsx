@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { View, Text, SafeAreaView, ScrollView, Pressable, Modal, Image, ActivityIndicator } from 'react-native'
-import { fetchChapterList, fetchChapterX, fetchChapterXpage } from '../../api/quranAPI'
+import { fetchChapterInfo, fetchChapterList, fetchChapterX, fetchChapterXpage } from '../../api/quranAPI'
 import { theme } from '../../theme/index'
+import Icon from 'react-native-vector-icons/Feather';
 
 
 const SurahComponent = ({ lang, ver, tr, translit, textSize }) => {
@@ -11,6 +12,7 @@ const SurahComponent = ({ lang, ver, tr, translit, textSize }) => {
     const [chapterName, setChapterName] = useState(null);
     const [chapterID, setChapterID] = useState(null);
     const [modalVisible, setModalVisible] = useState(false);
+    const [isInfoVisible, setInfoVisible] = useState(false);
 
     // code logic 
     const getList = async () => {
@@ -121,6 +123,22 @@ const SurahComponent = ({ lang, ver, tr, translit, textSize }) => {
         }
     }
 
+    // returns preface informatino about surah
+    const getchapterInfo = async () => {
+
+        setInfoVisible(!isInfoVisible)
+        console.log("inverted: ", isInfoVisible)
+
+        if (isInfoVisible === true) {
+            const info = await fetchChapterInfo(chapterID);
+            console.log('ch info:', info);
+            setInfoVisible(false);
+        } else {
+            setInfoVisible(true);
+        }
+
+    }
+
     return (
         <View>
             {/* Surah List Section */}
@@ -165,6 +183,13 @@ const SurahComponent = ({ lang, ver, tr, translit, textSize }) => {
                             {/* Centered title */}
                             <View className="absolute left-32 transform -translate-x-1/2">
                                 <Text className="font-bold text-2xl text-center">{chapterName}</Text>
+                            </View>
+
+                            <View>
+                                <Pressable onPress={() => getchapterInfo()}>
+                                    <Icon name="info" size={35} color="black" />
+                                </Pressable>
+
                             </View>
                         </View>
 
@@ -220,7 +245,7 @@ const SurahComponent = ({ lang, ver, tr, translit, textSize }) => {
                                     })}
 
                                     {/* page info and next, prev page */}
-                                    <View className="flex items-center justify-center mx-10 border-t-2 border-black pb-48">
+                                    <View className="flex items-center justify-center mx-10 border-t-2 border-black pb-52">
                                         <View className="flex-row items-center space-x-2 mt-4">
 
                                             <View className="right-4 rounded-md bg-red-400 p-2">
