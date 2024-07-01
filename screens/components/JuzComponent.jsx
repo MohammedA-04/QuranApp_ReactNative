@@ -4,7 +4,7 @@ import { fetchJuzList, fetchJuzX } from '../../api/quranAPI';
 import { SettingsContext } from '../../SettingsContext';
 import { theme, juzList } from '../../theme/index';
 
-const JuzComponent = ({ lang, ver, tr, translit }) => {
+const JuzComponent = ({ lang, ver, tr, translit, textSize }) => {
   const [juzContent, setJuzContent] = useState(null);
   const [isModalVisible, setModalVisible] = useState(false);
   const [choosenJuzName, setChoosenJuzName] = useState(null);
@@ -163,7 +163,7 @@ const JuzComponent = ({ lang, ver, tr, translit }) => {
                           </View>
                           <View className="flex-1 items-center justify-center">
                             <View className="whitespace-normal overflow-x-auto" style={{ alignItems: 'center' }}>
-                              <Text className={`${settings.System.textSize !== '4xl' ? settings.System.textSize : 'text-4xl'} leading-relaxed text-wrap`}>{verse.text_uthmani}</Text>
+                              <Text className={`${textSize !== '4xl' ? textSize : 'text-4xl'} leading-relaxed text-wrap`}>{verse.text_uthmani}</Text>
                             </View>
                           </View>
                         </View>
