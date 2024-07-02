@@ -12,7 +12,9 @@ const SurahComponent = ({ lang, ver, tr, translit, textSize }) => {
     const [chapterName, setChapterName] = useState(null);
     const [chapterID, setChapterID] = useState(null);
     const [modalVisible, setModalVisible] = useState(false);
+
     const [isInfoVisible, setInfoVisible] = useState(false);
+    const [chapterInfo, setChapterInfo] = useState(null);
 
     // code logic 
     const getList = async () => {
@@ -126,19 +128,73 @@ const SurahComponent = ({ lang, ver, tr, translit, textSize }) => {
     // returns preface informatino about surah
     const getchapterInfo = async () => {
 
-        setInfoVisible(!isInfoVisible)
-        console.log("inverted: ", isInfoVisible)
 
-        if (isInfoVisible === true) {
+        try {
+            console.log("Fetching info for chapter:", chapterID);
+            const info = await fetchChapterInfo(chapterID);
+            console.log('Chapter info:', info);
+            setChapterInfo(info);
+            setInfoVisible(true);
+        } catch (error) {
+            console.error('Error fetching chapter info:', error);
+        }
+
+        /*if (isInfoVisible === true) {
             const info = await fetchChapterInfo(chapterID);
             console.log('ch info:', info);
+            setChapterInfo(info);
             setInfoVisible(false);
         } else {
             setInfoVisible(true);
-        }
+        }*/
+
+        //setInfoVisible(!isInfoVisible)
+        console.log("inverted: ", isInfoVisible)
 
     }
 
+    // custom component popup
+    const InfoPopup = ({ isVisible, onClose, data }) => {
+        if (!data) return null;
+
+        return (
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={isVisible}
+                onRequestClose={onClose}
+            >
+                <View style={{ flex: 1, justifyContent: 'flex-end', backgroundColor: theme.bgGray(0.3) }} >
+                    <View style={{ backgroundColor: 'white', padding: 20, borderTopLeftRadius: 30, borderTopRightRadius: 30, maxHeight: '40%', }} >
+                        <View style={{ width: '40%', height: 4, backgroundColor: 'gray', borderRadius: 2, alignSelf: 'center', marginBottom: 30 }} />
+                        <ScrollView>
+                            <View style={{ marginBottom: 20 }}>
+                                {/*<View className='mx-12 border-t-4 rounded-lg border-gray-500'></View>*/}
+                                <Text style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 10 }}>
+                                    {data.chapter_info.short_text}
+                                </Text>
+                                <Text style={{ fontSize: 16, marginBottom: 20 }}>
+                                    {data.chapter_info.text}
+                                </Text>
+                                <Text style={{ fontSize: 16, marginBottom: 10 }}>
+                                    Revelation Order: {data.chapter_info.revelation_order}
+                                </Text>
+                                <Text style={{ fontSize: 16, marginBottom: 10 }}>
+                                    Verses Count: {data.verses_count}
+                                </Text>
+                            </View>
+                        </ScrollView>
+                        <Pressable onPress={onClose} style={{ marginTop: 20, padding: 10, backgroundColor: '#ddd', borderRadius: 5 }}>
+                            <Text style={{ textAlign: 'center' }}>Close</Text>
+                        </Pressable>
+                    </View>
+                </View >
+            </Modal >
+        );
+    };
+
+
+    // surahComponent
     return (
         <View>
             {/* Surah List Section */}
@@ -160,6 +216,9 @@ const SurahComponent = ({ lang, ver, tr, translit, textSize }) => {
                         )
                     })}
                 </View>
+
+                {/* code for information popup */}
+                {/* isInfoVisible && <Popup chapterInfo={chapterInfo} /> */}
             </ScrollView>
 
             {/* Modal for displaying chapter content */}
@@ -189,6 +248,7 @@ const SurahComponent = ({ lang, ver, tr, translit, textSize }) => {
                                 <Pressable onPress={() => getchapterInfo()}>
                                     <Icon name="info" size={35} color="black" />
                                 </Pressable>
+
 
                             </View>
                         </View>
@@ -267,11 +327,20 @@ const SurahComponent = ({ lang, ver, tr, translit, textSize }) => {
                                     </View>
 
 
+
+
                                 </ScrollView>
                             </View>
                         )}
                     </SafeAreaView>
                 </View>
+
+                <InfoPopup
+                    isVisible={isInfoVisible}
+                    onClose={() => setInfoVisible(false)}
+                    data={chapterInfo}
+                />
+
             </Modal>
 
         </View>
