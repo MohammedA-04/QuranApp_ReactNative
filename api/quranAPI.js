@@ -132,13 +132,13 @@ export const fetchChapterXpage = (chapter_number, page, language, translation) =
  * @param | id [required] (1-114)
  * @param | langauge [default: en] (ISO 639-2 standard)
 */
-export const fetchChapterInfo = async (id) => {
+export const fetchChapterInfo = async (id, language) => {
 
-    /*const params = {
-        //language: language ? language : 'en',
-    }*/
+    const params = {
+        language: language ? language : 'en',
+    }
     const url = `${chapterInfo_EndPoint}/${id}/info`
-    return apiCall(url)
+    return apiCall(url, params)
 
 }
 

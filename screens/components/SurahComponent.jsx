@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import { View, Text, SafeAreaView, ScrollView, Pressable, Modal, Image, ActivityIndicator } from 'react-native'
+import { View, Text, SafeAreaView, ScrollView, Pressable, Modal, Image, ActivityIndicator, useWindowDimensions } from 'react-native'
 import { fetchChapterInfo, fetchChapterList, fetchChapterX, fetchChapterXpage } from '../../api/quranAPI'
+import HTML from 'react-native-render-html';
 import { theme } from '../../theme/index'
 import Icon from 'react-native-vector-icons/Feather';
 
@@ -131,7 +132,7 @@ const SurahComponent = ({ lang, ver, tr, translit, textSize }) => {
 
         try {
             console.log("Fetching info for chapter:", chapterID);
-            const info = await fetchChapterInfo(chapterID);
+            const info = await fetchChapterInfo(chapterID, lang); // api.quran.com currently only have 'en' in v4
             console.log('Chapter info:', info);
             setChapterInfo(info);
             setInfoVisible(true);
@@ -153,6 +154,15 @@ const SurahComponent = ({ lang, ver, tr, translit, textSize }) => {
 
     }
 
+
+    // styles && width for HTMl parser
+    const {width} = useWindowDimensions()
+    const styleForHTML = { 
+        h1: {fontWeight: 'bold' }, 
+        li: {padding: 10},
+        ol: {padding: 10}
+      };
+
     // custom component popup
     const InfoPopup = ({ isVisible, onClose, data }) => {
         if (!data) return null;
@@ -169,19 +179,24 @@ const SurahComponent = ({ lang, ver, tr, translit, textSize }) => {
                         <View style={{ width: '40%', height: 4, backgroundColor: 'gray', borderRadius: 2, alignSelf: 'center', marginBottom: 30 }} />
                         <ScrollView>
                             <View style={{ marginBottom: 20 }}>
-                                {/*<View className='mx-12 border-t-4 rounded-lg border-gray-500'></View>*/}
-                                <Text style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 10 }}>
+                                 {/* Introductory Information about said Chapter */}
+                                 <Text style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 10 }}>
                                     {data.chapter_info.short_text}
+                                    
                                 </Text>
-                                <Text style={{ fontSize: 16, marginBottom: 20 }}>
-                                    {data.chapter_info.text}
+
+                                {/* Content provided by source regarding the Chapter ~ parsed from HTML */}
+                                <HTML source={{ html: data.chapter_info.text }} tagsStyles={styleForHTML}/>
+
+
+                                {/* Source providing the chapter information */}
+                                <Text style={{ textAlign: 'center', fontSize: 16, marginBottom: 10 }}>
+                                    <Text style={{fontWeight: 'bold'}}>Provided by</Text>
+                                    <Text>: {data.chapter_info.source}</Text>
                                 </Text>
-                                <Text style={{ fontSize: 16, marginBottom: 10 }}>
-                                    Revelation Order: {data.chapter_info.revelation_order}
-                                </Text>
-                                <Text style={{ fontSize: 16, marginBottom: 10 }}>
-                                    Verses Count: {data.verses_count}
-                                </Text>
+                                
+                                {/* className='italic text-center text-gray-600' */}
+                                <Text style={{fontStyle: 'italic', textAlign: 'center', color:'gray'}}>note: chapter information are not based on translation the selected</Text>
                             </View>
                         </ScrollView>
                         <Pressable onPress={onClose} style={{ marginTop: 20, padding: 10, backgroundColor: '#ddd', borderRadius: 5 }}>
