@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react'
-import { View, Text, SafeAreaView, ScrollView, Pressable, Modal, Image, ActivityIndicator, useWindowDimensions } from 'react-native'
+import { View, Text, SafeAreaView, ScrollView, Pressable, Modal, Image, ActivityIndicator, useWindowDimensions, Dimensions } from 'react-native'
 import { fetchChapterInfo, fetchChapterList, fetchChapterX, fetchChapterXpage } from '../../api/quranAPI'
 import HTML from 'react-native-render-html';
 import { theme } from '../../theme/index'
 import Icon from 'react-native-vector-icons/Feather';
+
+import Animated, {useAnimatedStyle, useSharedValue} from 'react-native-reanimated';
+import { GestureHandlerRootView, GestureDetector, Gesture, withSpring, onClose, PanGestureHandler } from 'react-native-gesture-handler';
 
 
 const SurahComponent = ({ lang, ver, tr, translit, textSize }) => {
@@ -155,16 +158,39 @@ const SurahComponent = ({ lang, ver, tr, translit, textSize }) => {
     }
 
 
-    // styles && width for HTMl parser
-    const {width} = useWindowDimensions()
+    // styles && width for HTMl parser && animation handlers
     const styleForHTML = { 
         h1: {fontWeight: 'bold' }, 
         li: {padding: 10},
         ol: {padding: 10}
-      };
+    };
+    
+    // see forked implementation: [https://youtube.com/watch?v=KvRqsRwpwhY&t=736s&ab_channel=Reactiive]
+    const {SCREEN_HEIGHT} = Dimensions.get('window');
+    const {SCREEN_WIDTH} = useWindowDimensions();
+    const translateY = useSharedValue(0);
+    const context = useSharedValue({y: 0});
+
+    const gesture = Gesture.Pan()
+    .onStart(() => {
+        context.value = { y: translateY.value };
+    })
+    .onUpdate((e) => {
+        translateY.value = e.translationY + context.value.y;
+    })
+    
+
+    const rBottomSheetStyle = useAnimatedStyle(() => {
+        return{
+            transform: [{translateY: translateY.value}]
+        }
+    })
+    
+
+    
 
     // custom component popup
-    const InfoPopup = ({ isVisible, onClose, data }) => {
+    const InfoBottomSheet = ({ isVisible, onClose, data }) => {
         if (!data) return null;
 
         return (
@@ -174,13 +200,17 @@ const SurahComponent = ({ lang, ver, tr, translit, textSize }) => {
                 visible={isVisible}
                 onRequestClose={onClose}
             >
-                <View style={{ flex: 1, justifyContent: 'flex-end', backgroundColor: theme.bgGray(0.3) }} >
-                    <View style={{ backgroundColor: 'white', padding: 20, borderTopLeftRadius: 30, borderTopRightRadius: 30, maxHeight: '40%', }} >
-                        <View style={{ width: '40%', height: 4, backgroundColor: 'gray', borderRadius: 2, alignSelf: 'center', marginBottom: 30 }} />
+
+                <GestureHandlerRootView >
+                <View className='justify-end flex-1' style={{backgroundColor: theme.bgGray(0.3)}} >
+                    
+                    <PanGestureHandler onGestureEvent={gesture}>
+                    <Animated.View className="bg-white p-5 rounded-tr-3xl rounded-tl-3xl">
+                        <View className='h-1 bg-gray-500 mb-7 self-center rounded-[2px] w-[40%]'/>
                         <ScrollView>
-                            <View style={{ marginBottom: 20 }}>
-                                 {/* Introductory Information about said Chapter */}
-                                 <Text style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 10 }}>
+                        <View className='mb-5'>
+                                {/* Introductory Information about said Chapter */}
+                                <Text className='font-bold text-sm mb-[10px]'>
                                     {data.chapter_info.short_text}
                                     
                                 </Text>
@@ -190,20 +220,24 @@ const SurahComponent = ({ lang, ver, tr, translit, textSize }) => {
 
 
                                 {/* Source providing the chapter information */}
-                                <Text style={{ textAlign: 'center', fontSize: 16, marginBottom: 10 }}>
-                                    <Text style={{fontWeight: 'bold'}}>Provided by</Text>
+                                <Text className='text-center text-lg mb-[10px] mt-[20px]'>
+                                    <Text className='font-bold'>Provided by</Text>
                                     <Text>: {data.chapter_info.source}</Text>
                                 </Text>
                                 
                                 {/* className='italic text-center text-gray-600' */}
-                                <Text style={{fontStyle: 'italic', textAlign: 'center', color:'gray'}}>note: chapter information are not based on translation the selected</Text>
+                                <Text className='italic text-center text-xs text-gray-500'>note: chapter information are not based on translation the selected</Text>
                             </View>
                         </ScrollView>
                         <Pressable onPress={onClose} style={{ marginTop: 20, padding: 10, backgroundColor: '#ddd', borderRadius: 5 }}>
                             <Text style={{ textAlign: 'center' }}>Close</Text>
                         </Pressable>
-                    </View>
-                </View >
+                    </Animated.View>
+                    </PanGestureHandler>
+
+                </View>
+                </GestureHandlerRootView>
+
             </Modal >
         );
     };
@@ -350,7 +384,8 @@ const SurahComponent = ({ lang, ver, tr, translit, textSize }) => {
                     </SafeAreaView>
                 </View>
 
-                <InfoPopup
+                {/* custom component loads info on Chapter ~ located in a modal*/}
+                <InfoBottomSheet
                     isVisible={isInfoVisible}
                     onClose={() => setInfoVisible(false)}
                     data={chapterInfo}

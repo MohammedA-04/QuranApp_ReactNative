@@ -119,7 +119,7 @@ const JuzComponent = ({ lang, ver, tr, translit, textSize }) => {
         </View>
       </ScrollView>
 
-      {/* Pop Up Section */}
+      {/* Pop Up Section: contains juz content */}
       <Modal
         animationType='slide'
         visible={isModalVisible}
