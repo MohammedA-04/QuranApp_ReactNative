@@ -16,7 +16,7 @@ export const SettingsProvider = ({ children }) => {
         },
         About: {
             author: 'Mohammed Ahmed',
-            version: 'v0.0.1'
+            version: 'v0.0.2'
         }
     });
 
