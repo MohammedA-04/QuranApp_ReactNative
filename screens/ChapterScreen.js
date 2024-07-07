@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { View, Text, SafeAreaView, ScrollView, Pressable, ActivityIndicator, Modal, Image, Dimensions } from 'react-native'
+import { View, Text, SafeAreaView, ScrollView, Pressable, ActivityIndicator, Modal, Image, useWindowDimensions, Dimensions } from 'react-native'
 
 import { SettingsContext } from '../SettingsContext';
 import { theme } from '../theme';
@@ -9,7 +9,7 @@ import { SurahComponent } from './components/SurahComponent';
 
 export default function ChapterScreen() {
 
-
+    const SCREEN_HEIGHT = useWindowDimensions().height;
     const { settings } = useContext(SettingsContext)
 
     const listType = [
@@ -96,6 +96,7 @@ export default function ChapterScreen() {
                                     tr={settings.Language.translation}
                                     translit={settings.Language.transliteration}
                                     textSize={settings.System.textSize}
+                                    screen_height={SCREEN_HEIGHT}
                                 />
                             )}
 

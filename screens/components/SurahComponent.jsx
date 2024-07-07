@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from 'react'
-import { View, Text, SafeAreaView, ScrollView, Pressable, Modal, Image, ActivityIndicator, useWindowDimensions, Dimensions } from 'react-native'
+import { View, Text, SafeAreaView, ScrollView, Pressable, Modal, Image, ActivityIndicator, useWindowDimensions } from 'react-native'
 import { fetchChapterInfo, fetchChapterList, fetchChapterX, fetchChapterXpage } from '../../api/quranAPI'
 import HTML from 'react-native-render-html';
 import { theme } from '../../theme/index'
 import Icon from 'react-native-vector-icons/Feather';
 
-import Animated, {useAnimatedStyle, useSharedValue} from 'react-native-reanimated';
-import { GestureHandlerRootView, GestureDetector, Gesture, withSpring, onClose, PanGestureHandler } from 'react-native-gesture-handler';
+import Animated, { interpolate, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
+import { GestureHandlerRootView, GestureDetector, Gesture } from 'react-native-gesture-handler';
 
-
-const SurahComponent = ({ lang, ver, tr, translit, textSize }) => {
+const SurahComponent = ({ lang, ver, tr, translit, textSize, screen_height }) => {
 
     const [list, setList] = useState(null);
     const [chapterContent, setChapterContent] = useState(null);
@@ -19,6 +18,9 @@ const SurahComponent = ({ lang, ver, tr, translit, textSize }) => {
 
     const [isInfoVisible, setInfoVisible] = useState(false);
     const [chapterInfo, setChapterInfo] = useState(null);
+    const [scrollY, setScrollY] = useState(0);
+
+
 
     // code logic 
     const getList = async () => {
@@ -159,35 +161,45 @@ const SurahComponent = ({ lang, ver, tr, translit, textSize }) => {
 
 
     // styles && width for HTMl parser && animation handlers
-    const styleForHTML = { 
-        h1: {fontWeight: 'bold' }, 
-        li: {padding: 10},
-        ol: {padding: 10}
+    const styleForHTML = {
+        h1: { fontWeight: 'bold' },
+        li: { padding: 10 },
+        ol: { padding: 10 }
     };
-    
+
     // see forked implementation: [https://youtube.com/watch?v=KvRqsRwpwhY&t=736s&ab_channel=Reactiive]
-    const {SCREEN_HEIGHT} = Dimensions.get('window');
-    const {SCREEN_WIDTH} = useWindowDimensions();
-    const translateY = useSharedValue(0);
-    const context = useSharedValue({y: 0});
+    const SCREEN_WIDTH = useWindowDimensions().width;
+    const initial_Y = 0.6 * screen_height; // for 40% screen height 
+    const translateY = useSharedValue(initial_Y);
+    const context = useSharedValue({ y: 0 });
 
     const gesture = Gesture.Pan()
-    .onStart(() => {
-        context.value = { y: translateY.value };
-    })
-    .onUpdate((e) => {
-        translateY.value = e.translationY + context.value.y;
-    })
-    
+        .onStart(() => {
+            context.value = { y: translateY.value };
+        })
+        .onUpdate((e) => {
+            translateY.value = e.translationY + context.value.y;
+
+            // since height is negative value
+            translateY.value = Math.max(
+                0, Math.min(translateY.value, screen_height));
+        });
+
+    useEffect(() => {
+        translateY.value = withTiming(initial_Y);
+    }, [])
+
 
     const rBottomSheetStyle = useAnimatedStyle(() => {
-        return{
-            transform: [{translateY: translateY.value}]
+        return {
+            transform: [{ translateY: translateY.value }]
         }
     })
-    
 
-    
+    // Animated.View has bsC and rBS
+
+
+
 
     // custom component popup
     const InfoBottomSheet = ({ isVisible, onClose, data }) => {
@@ -201,41 +213,46 @@ const SurahComponent = ({ lang, ver, tr, translit, textSize }) => {
                 onRequestClose={onClose}
             >
 
-                <GestureHandlerRootView >
-                <View className='justify-end flex-1' style={{backgroundColor: theme.bgGray(0.3)}} >
-                    
-                    <PanGestureHandler onGestureEvent={gesture}>
-                    <Animated.View className="bg-white p-5 rounded-tr-3xl rounded-tl-3xl">
-                        <View className='h-1 bg-gray-500 mb-7 self-center rounded-[2px] w-[40%]'/>
-                        <ScrollView>
-                        <View className='mb-5'>
-                                {/* Introductory Information about said Chapter */}
-                                <Text className='font-bold text-sm mb-[10px]'>
-                                    {data.chapter_info.short_text}
-                                    
-                                </Text>
+                <GestureHandlerRootView className='flex-1'>
+                    <View className='justify-end flex-1' style={{ backgroundColor: theme.bgGray(0.3) }} >
 
-                                {/* Content provided by source regarding the Chapter ~ parsed from HTML */}
-                                <HTML source={{ html: data.chapter_info.text }} tagsStyles={styleForHTML}/>
+                        <GestureDetector gesture={gesture}>
+                            <Animated.View className="bg-white p-5 rounded-tr-3xl rounded-tl-3xl"
+                                style={[
+                                    { position: "absolute", minHeight: 0.5 * screen_height }, // Ensure minimum height for bottom part
+                                    rBottomSheetStyle,
+                                ]}
+                            >
+                                <View className='h-1 w-20 bg-gray-500 mb-7 self-center rounded-[2px]' />
+                                <ScrollView>
+                                    <View className='mb-5'>
+                                        {/* Introductory Information about said Chapter */}
+                                        <Text className='font-bold text-sm mb-[10px]'>
+                                            {data.chapter_info.short_text}
+
+                                        </Text>
+
+                                        {/* Content provided by source regarding the Chapter ~ parsed from HTML */}
+                                        <HTML source={{ html: data.chapter_info.text }} tagsStyles={styleForHTML} />
 
 
-                                {/* Source providing the chapter information */}
-                                <Text className='text-center text-lg mb-[10px] mt-[20px]'>
-                                    <Text className='font-bold'>Provided by</Text>
-                                    <Text>: {data.chapter_info.source}</Text>
-                                </Text>
-                                
-                                {/* className='italic text-center text-gray-600' */}
-                                <Text className='italic text-center text-xs text-gray-500'>note: chapter information are not based on translation the selected</Text>
-                            </View>
-                        </ScrollView>
-                        <Pressable onPress={onClose} style={{ marginTop: 20, padding: 10, backgroundColor: '#ddd', borderRadius: 5 }}>
-                            <Text style={{ textAlign: 'center' }}>Close</Text>
-                        </Pressable>
-                    </Animated.View>
-                    </PanGestureHandler>
+                                        {/* Source providing the chapter information */}
+                                        <Text className='text-center text-lg mb-[10px] mt-[20px]'>
+                                            <Text className='font-bold'>Provided by</Text>
+                                            <Text>: {data.chapter_info.source}</Text>
+                                        </Text>
 
-                </View>
+                                        {/* className='italic text-center text-gray-600' */}
+                                        <Text className='italic text-center text-xs text-gray-500'>note: chapter information are not based on translation the selected</Text>
+                                    </View>
+                                </ScrollView>
+                                <Pressable onPress={onClose} style={{ marginTop: 20, padding: 10, backgroundColor: '#ddd', borderRadius: 5 }}>
+                                    <Text style={{ textAlign: 'center' }}>Close</Text>
+                                </Pressable>
+                            </Animated.View>
+                        </GestureDetector>
+
+                    </View>
                 </GestureHandlerRootView>
 
             </Modal >
@@ -325,7 +342,7 @@ const SurahComponent = ({ lang, ver, tr, translit, textSize }) => {
                                         const lastIteration = i === chapterContent.verses.length - 1; // return boolean
 
                                         return (
-                                            <View key={i} className={`mx-4 mt-8 pb-10 space-y-4 ${!lastIteration && 'border-b-2 border-black'}`}>
+                                            <View key={i} className={`mx-4 mt-8 pb-10 space-y-4 ${!lastIteration && 'border-b-[0.5px] border-black/50'}`}>
                                                 <View className="flex-row items-center justify-center">
 
                                                     <View className="w-1/5 items-center justify-center">
