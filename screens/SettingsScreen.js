@@ -14,6 +14,7 @@ export default function SettingsScreen() {
 
     const [translationsOptions, setTranslationsOptions] = useState([]);
     const [isLangTranslationsLoaded, setLangTranslationsLoaded] = useState(false);
+    const [isLangVerEnabled, setIsLangVerEnabled] = useState(false);
 
     const handleTextSizeChange = (value) => {
         // Update textSize setting in context
@@ -53,7 +54,7 @@ export default function SettingsScreen() {
             console.log('choosen lang:', value)
             changeSetting('Language', 'language', value);
             changeSetting('Language', 'version', null);
-            setLangTranslationsLoaded(false);
+            setLangTranslationsLoaded(false)
 
         } else if (value === null) {
             setLanguage(null);
@@ -61,6 +62,7 @@ export default function SettingsScreen() {
             changeSetting('Language', 'language', null);
             changeSetting('Language', 'version', null);
             setLangTranslationsLoaded(false);
+            setIsLangVerEnabled(false)
         }
 
 
@@ -73,6 +75,7 @@ export default function SettingsScreen() {
             changeSetting('Language', 'version', value)
         } else if (value === null) {
             setChoice(null);
+            setIsLangVerEnabled(false)
             changeSetting('Language', 'version', null)
             return;
         } else {
@@ -94,6 +97,13 @@ export default function SettingsScreen() {
         checkSettings();
     }, [settings]);
 
+    useEffect(() => {
+        if(settings.Language.language && settings.Language.version){
+            setIsLangVerEnabled(true)
+        }
+
+    }, [settings.Language.language, settings.Language.version])
+
 
 
 
@@ -113,14 +123,21 @@ export default function SettingsScreen() {
                                 {Object.entries(sectionSettings).map(([key, value]) => (
                                     <View key={key} style={{ backgroundColor: 'white', borderRadius: 8, padding: 16, marginTop: 8, flexDirection: 'row', alignItems: 'center' }}>
                                         <Text style={{ flex: 1, fontWeight: 'bold' }}>{key}:</Text>
-                                        {typeof value === 'boolean' && (
+                                        
+                                        {/*
+                                            $value: value within settings context e.g., Mohammed Ahmed
+                                            $key: key of object e.g., author
+                                        */}
+                                        
+                                        {typeof value === 'boolean' && key !== 'translation' && (
                                             <Switch
                                                 onValueChange={() => toggleSetting(sectionName, key)} // negates 'key'
                                                 value={value}
                                             />
                                         )}
 
-                                        {key === 'language' && typeof value !== Boolean && (
+                                        {/* For Language: language */}
+                                        {key === 'language' && sectionName === 'Language' && typeof value !== Boolean && (
                                             <View className="w-7/12">
                                                 <Select
                                                     options={languageOptions}
@@ -132,6 +149,7 @@ export default function SettingsScreen() {
 
                                         )}
 
+                                        {/* For Language: version */}
                                         {key === 'version' && sectionName === 'Language' && (
                                             isLangTranslationsLoaded ? (
                                                 <View className="w-7/12">
@@ -149,6 +167,19 @@ export default function SettingsScreen() {
                                                     <Text>Please Select Language</Text>
                                                 </View>
 
+                                            )
+                                        )}
+
+                                        {key === 'translation' && (
+                                            isLangVerEnabled ?  (
+                                            <Switch
+                                                onValueChange={() => toggleSetting(sectionName, key)} // negates 'key'
+                                                value={value}
+                                            />
+                                        ): (
+                                            <View className='w-7/12'>
+                                                <Text>Select Language and Version First</Text>
+                                            </View>
                                             )
                                         )}
 
