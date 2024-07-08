@@ -83,7 +83,7 @@ const SurahComponent = ({ lang, ver, tr, translit, textSize, screen_height }) =>
     const getTranslation = (verse) => {
 
         // check possible null entry
-        console.log('verse', verse)
+        // console.log('verse', verse)
 
 
         /**
@@ -96,8 +96,9 @@ const SurahComponent = ({ lang, ver, tr, translit, textSize, screen_height }) =>
          * else: throw new Erorr
          * 
          */
-        console.log(`t is: ${lang} and v is: ${ver}`);
-        console.log(`verse.translations[0].text: ${verse} `)
+
+        // console.log(`t is: ${lang} and v is: ${ver}`);
+        //console.log(`verse.translations[0].text: ${verse} `)
 
         if (tr === true && lang !== null && ver !== null) {
             return verse.translations[0].text;
@@ -168,21 +169,27 @@ const SurahComponent = ({ lang, ver, tr, translit, textSize, screen_height }) =>
     };
 
     // see forked implementation: [https://youtube.com/watch?v=KvRqsRwpwhY&t=736s&ab_channel=Reactiive]
-    const SCREEN_WIDTH = useWindowDimensions().width;
+    const screen_width = useWindowDimensions().width;
     const initial_Y = 0.6 * screen_height; // for 40% screen height 
     const translateY = useSharedValue(initial_Y);
     const context = useSharedValue({ y: 0 });
+    console.log('screen height type:', typeof initial_Y)
 
     const gesture = Gesture.Pan()
         .onStart(() => {
-            context.value = { y: translateY.value };
+            context.value = { y: translateY.value }; // ans = 0.6 * s_h
+            console.log('onStart context value:', context.value);
         })
         .onUpdate((e) => {
+            console.log('onUpdate arg:', e);
+
             translateY.value = e.translationY + context.value.y;
+            console.log('onUpdate value:', translateY.value);
 
             // since height is negative value
             translateY.value = Math.max(
                 0, Math.min(translateY.value, screen_height));
+            console.log(`onUpdate value max(${translateY.value})`);
         });
 
     useEffect(() => {
@@ -196,7 +203,9 @@ const SurahComponent = ({ lang, ver, tr, translit, textSize, screen_height }) =>
         }
     })
 
-    // Animated.View has bsC and rBS
+    const resetTranslateY = () => {
+        translateY.value = initial_Y
+    }
 
 
 
@@ -211,6 +220,7 @@ const SurahComponent = ({ lang, ver, tr, translit, textSize, screen_height }) =>
                 transparent={true}
                 visible={isVisible}
                 onRequestClose={onClose}
+
             >
 
                 <GestureHandlerRootView className='flex-1'>
@@ -219,7 +229,7 @@ const SurahComponent = ({ lang, ver, tr, translit, textSize, screen_height }) =>
                         <GestureDetector gesture={gesture}>
                             <Animated.View className="bg-white p-5 rounded-tr-3xl rounded-tl-3xl"
                                 style={[
-                                    { position: "absolute", minHeight: 0.5 * screen_height }, // Ensure minimum height for bottom part
+                                    { position: "absolute", minHeight: String(screen_height * 0.5) }, // Ensure minimum height for bottom part
                                     rBottomSheetStyle,
                                 ]}
                             >
@@ -233,7 +243,7 @@ const SurahComponent = ({ lang, ver, tr, translit, textSize, screen_height }) =>
                                         </Text>
 
                                         {/* Content provided by source regarding the Chapter ~ parsed from HTML */}
-                                        <HTML source={{ html: data.chapter_info.text }} tagsStyles={styleForHTML} />
+                                        <HTML source={{ html: data.chapter_info.text }} tagsStyles={styleForHTML} contentWidth={screen_width} />
 
 
                                         {/* Source providing the chapter information */}
@@ -404,7 +414,7 @@ const SurahComponent = ({ lang, ver, tr, translit, textSize, screen_height }) =>
                 {/* custom component loads info on Chapter ~ located in a modal*/}
                 <InfoBottomSheet
                     isVisible={isInfoVisible}
-                    onClose={() => setInfoVisible(false)}
+                    onClose={() => { resetTranslateY(), setInfoVisible(false) }}
                     data={chapterInfo}
                 />
 
