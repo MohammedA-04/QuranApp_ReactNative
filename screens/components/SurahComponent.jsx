@@ -7,6 +7,8 @@ import Icon from 'react-native-vector-icons/Feather';
 
 import Animated, { interpolate, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { GestureHandlerRootView, GestureDetector, Gesture } from 'react-native-gesture-handler';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { faX, faCircle } from '@fortawesome/free-solid-svg-icons'
 
 const SurahComponent = ({ lang, ver, tr, translit, textSize, screen_height }) => {
 
@@ -234,6 +236,14 @@ const SurahComponent = ({ lang, ver, tr, translit, textSize, screen_height }) =>
                                 ]}
                             >
                                 <View className='h-1 w-20 bg-gray-500 mb-7 self-center rounded-[2px]' />
+
+                                {/* circle close button */}
+                                <View className='-mt-8 items-end mb-4'>
+                                    <Pressable onPress={onClose} className='w-8 h-8 rounded-full bg-gray-300 justify-center items-center'>
+                                        <FontAwesomeIcon icon={faX} color='black' size={18} className='font-bold' />
+                                    </Pressable>
+                                </View>
+
                                 <ScrollView>
                                     <View className='mb-5'>
                                         {/* Introductory Information about said Chapter */}
