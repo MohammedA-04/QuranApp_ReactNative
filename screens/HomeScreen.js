@@ -20,12 +20,12 @@ export default function HomeScreen() {
         if (data.verse) {
             setClicked(true);
             setRandomAyah(data.verse);
-            console.log('data verse:\n', data.verse);
-            console.log('key: ', data.verse.verse_key);
+            //// console.log('data verse:\n', data.verse);
+            //// console.log('key: ', data.verse.verse_key);
 
             // Fetch detailed Ayah data
             const dataByAyah = await fetchAyahByKey(data.verse.verse_key, { words: true }, settings.Language.language, settings.Language.version);
-            console.log('data by ayah:\n', dataByAyah);
+            //// console.log('data by ayah:\n', dataByAyah);
 
             // Log translations if present
             if (dataByAyah && dataByAyah.verse.words) {
@@ -71,11 +71,11 @@ export default function HomeScreen() {
         }));
 
         let key2 = keyArg.slice(0, keyArg.indexOf(':'));
-        console.log('key', keyArg)
-        console.log('new key: ', key2)
+        //// console.log('key', keyArg)
+        //// console.log('new key: ', key2)
 
         // setID(keyArg)
-        console.log('cd:\n\n', chapterData)
+        //// console.log('cd:\n\n', chapterData)
 
         chapterData.forEach(chapter => {
             // [{.},{.},{.}] => get {ith} => get ["Al-fatihah"] out of ["Al-fatihah" : 1]
@@ -89,7 +89,7 @@ export default function HomeScreen() {
                 setChapter(chapterName);
             }
         });
-        console.log('Chapter: ', chapter)
+        //// console.log('Chapter: ', chapter)
 
     }
 

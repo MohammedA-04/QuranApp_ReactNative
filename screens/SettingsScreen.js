@@ -51,7 +51,7 @@ export default function SettingsScreen() {
         // reset the loaded state when language change
         if (value !== null) {
             setLanguage(value);
-            console.log('choosen lang:', value)
+            //// console.log('choosen lang:', value)
             changeSetting('Language', 'language', value);
             changeSetting('Language', 'version', null);
             setLangTranslationsLoaded(false)
@@ -87,9 +87,9 @@ export default function SettingsScreen() {
 
 
     const checkSettings = () => {
-        console.log('translation toggle: ', settings.Language.translation);
-        console.log('language', settings.Language.language)
-        console.log('version: ', settings.Language.version);
+        //// console.log('translation toggle: ', settings.Language.translation);
+        //// console.log('language', settings.Language.language)
+        //// console.log('version: ', settings.Language.version);
     }
 
     // Add a useEffect to check settings after changes
@@ -98,7 +98,7 @@ export default function SettingsScreen() {
     }, [settings]);
 
     useEffect(() => {
-        if(settings.Language.language && settings.Language.version){
+        if (settings.Language.language && settings.Language.version) {
             setIsLangVerEnabled(true)
         }
 
@@ -123,12 +123,12 @@ export default function SettingsScreen() {
                                 {Object.entries(sectionSettings).map(([key, value]) => (
                                     <View key={key} style={{ backgroundColor: 'white', borderRadius: 8, padding: 16, marginTop: 8, flexDirection: 'row', alignItems: 'center' }}>
                                         <Text style={{ flex: 1, fontWeight: 'bold' }}>{key}:</Text>
-                                        
+
                                         {/*
                                             $value: value within settings context e.g., Mohammed Ahmed
                                             $key: key of object e.g., author
                                         */}
-                                        
+
                                         {typeof value === 'boolean' && key !== 'translation' && (
                                             <Switch
                                                 onValueChange={() => toggleSetting(sectionName, key)} // negates 'key'
@@ -171,15 +171,15 @@ export default function SettingsScreen() {
                                         )}
 
                                         {key === 'translation' && (
-                                            isLangVerEnabled ?  (
-                                            <Switch
-                                                onValueChange={() => toggleSetting(sectionName, key)} // negates 'key'
-                                                value={value}
-                                            />
-                                        ): (
-                                            <View className='w-7/12'>
-                                                <Text>Select Language and Version First</Text>
-                                            </View>
+                                            isLangVerEnabled ? (
+                                                <Switch
+                                                    onValueChange={() => toggleSetting(sectionName, key)} // negates 'key'
+                                                    value={value}
+                                                />
+                                            ) : (
+                                                <View className='w-7/12'>
+                                                    <Text>Select Language and Version First</Text>
+                                                </View>
                                             )
                                         )}
 

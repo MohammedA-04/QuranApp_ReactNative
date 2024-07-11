@@ -28,20 +28,20 @@ const SurahComponent = ({ lang, ver, tr, translit, textSize, screen_height }) =>
     const getList = async () => {
 
         const list = await fetchChapterList();
-        console.log('hey:', list)
+        //// console.log('hey:', list)
 
         const chapterData = list.chapters.map(chapter => ({
             [chapter.name_simple]: chapter.id
 
         }))
         setList(chapterData);
-        console.log("List:\n", chapterData)
+        //// console.log("List:\n", chapterData)
     }
 
     useEffect(() => {
 
         getList();
-        console.log('settings:', textSize)
+        //// console.log('settings:', textSize)
 
 
     }, [])
@@ -50,7 +50,7 @@ const SurahComponent = ({ lang, ver, tr, translit, textSize, screen_height }) =>
     // onPress <Pressable> => render component of Uthman Script and Translation which is mapped until ...n
     const loadChapter = async (chapterId, chapterName) => {
         const ch = await fetchChapterX(chapterId, lang, ver);
-        console.log('data: ', ch)
+        //// console.log('data: ', ch)
 
         setChapterContent(ch);
         setChapterName(chapterName);
@@ -85,7 +85,7 @@ const SurahComponent = ({ lang, ver, tr, translit, textSize, screen_height }) =>
     const getTranslation = (verse) => {
 
         // check possible null entry
-        // console.log('verse', verse)
+        //// console.log('verse', verse)
 
 
         /**
@@ -99,8 +99,8 @@ const SurahComponent = ({ lang, ver, tr, translit, textSize, screen_height }) =>
          * 
          */
 
-        // console.log(`t is: ${lang} and v is: ${ver}`);
-        //console.log(`verse.translations[0].text: ${verse} `)
+        //// console.log(`t is: ${lang} and v is: ${ver}`);
+        //// console.log(`verse.translations[0].text: ${verse} `)
 
         if (tr === true && lang !== null && ver !== null) {
             return verse.translations[0].text;
@@ -141,7 +141,7 @@ const SurahComponent = ({ lang, ver, tr, translit, textSize, screen_height }) =>
         try {
             console.log("Fetching info for chapter:", chapterID);
             const info = await fetchChapterInfo(chapterID, lang); // api.quran.com currently only have 'en' in v4
-            console.log('Chapter info:', info);
+            //// console.log('Chapter info:', info);
             setChapterInfo(info);
             setInfoVisible(true);
         } catch (error) {
@@ -158,7 +158,7 @@ const SurahComponent = ({ lang, ver, tr, translit, textSize, screen_height }) =>
         }*/
 
         //setInfoVisible(!isInfoVisible)
-        console.log("inverted: ", isInfoVisible)
+        //// console.log("inverted: ", isInfoVisible)
 
     }
 
@@ -175,23 +175,23 @@ const SurahComponent = ({ lang, ver, tr, translit, textSize, screen_height }) =>
     const initial_Y = 0.6 * screen_height; // for 40% screen height 
     const translateY = useSharedValue(initial_Y);
     const context = useSharedValue({ y: 0 });
-    console.log('screen height type:', typeof initial_Y)
+    //// console.log('screen height type:', typeof initial_Y)
 
     const gesture = Gesture.Pan()
         .onStart(() => {
             context.value = { y: translateY.value }; // ans = 0.6 * s_h
-            console.log('onStart context value:', context.value);
+            //// console.log('onStart context value:', context.value);
         })
         .onUpdate((e) => {
-            console.log('onUpdate arg:', e);
+            //// console.log('onUpdate arg:', e);
 
             translateY.value = e.translationY + context.value.y;
-            console.log('onUpdate value:', translateY.value);
+            //// console.log('onUpdate value:', translateY.value);
 
             // since height is negative value
             translateY.value = Math.max(
                 0, Math.min(translateY.value, screen_height));
-            console.log(`onUpdate value max(${translateY.value})`);
+            //// console.log(`onUpdate value max(${translateY.value})`);
         });
 
     useEffect(() => {

@@ -16,7 +16,7 @@ const JuzComponent = ({ lang, ver, tr, translit, textSize }) => {
   // * @Param | juzNum: number (of Juz)
   const loadJuzX = async (juzNum) => {
     const juzX = await fetchJuzX(juzNum, 0, lang, ver);
-    console.log(`juzX: ${juzX}`)
+    //// console.log(`juzX: ${juzX}`)
 
     setJuzContent(juzX);
     setModalVisible(true);
@@ -26,7 +26,7 @@ const JuzComponent = ({ lang, ver, tr, translit, textSize }) => {
   const getTranslation = (verse) => {
 
     // check possible null entry
-    console.log('verse', verse)
+    //// console.log('verse', verse)
 
 
     /**
@@ -39,8 +39,8 @@ const JuzComponent = ({ lang, ver, tr, translit, textSize }) => {
      * else: throw new Erorr
      * 
      */
-    console.log(`t is: ${lang} and v is: ${ver}`);
-    console.log(`verse.translations[0].text: ${verse} `)
+    //// console.log(`t is: ${lang} and v is: ${ver}`);
+    //// console.log(`verse.translations[0].text: ${verse} `)
 
     if (tr === true && lang !== null && ver !== null) {
       return verse.translations[0].text;
@@ -104,7 +104,7 @@ const JuzComponent = ({ lang, ver, tr, translit, textSize }) => {
       <ScrollView vertical>
         <View className="mt-3 pb-32">
           {juzList && juzList.map((juz, i) => {
-            console.log(juz.juz_number)
+            //// console.log(juz.juz_number)
             return (
               <View key={i} className="p-1 rounded-md ">
                 <Pressable onPress={() => { loadJuzX(juz.juz_number); {/* passing juz as num to juz/${juz_num} */ } setChoosenJuzName(juz.juz_name); setChoosenJuzNum(juz.juz_number); }}>

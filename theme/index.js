@@ -187,8 +187,8 @@ export const juzList = [
     { juz_number: 28, juz_name: "Qad Aflaha" },
     { juz_number: 29, juz_name: "Tabarakalladhi" },
     { juz_number: 30, juz_name: "Amma Yatasa'aloon" }
-  ];
-  
-  console.log(juzList);
-  
+];
+
+//// console.log(juzList);
+
 

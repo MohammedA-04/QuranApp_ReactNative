@@ -152,12 +152,12 @@ export const fetchTranslations = async (language) => {
     // 2 call api using this
     // 3 before return filter data by language_name  
 
-    console.log('passed down prop:', language)
+    //// console.log('passed down prop:', language)
 
     try {
         const url = `${translations_EndPoint}?language=${language}`
         const data = await apiCall(url);
-        console.log(data)
+        //// console.log(data)
 
         const translationsObject = {};
         const languagesAvailable = new Set();
@@ -184,8 +184,8 @@ export const fetchTranslations = async (language) => {
         }
 
 
-        console.log('translations return: ', translationsObject);
-        console.log('language available:', Array.from(languagesAvailable))
+        //// console.log('translations return: ', translationsObject);
+        //// console.log('language available:', Array.from(languagesAvailable))
 
 
         // returns: { TCQ: {lang: en, id: 131}, ... n}    
