@@ -82,6 +82,15 @@ const SurahComponent = ({ lang, ver, tr, translit, textSize, screen_height }) =>
         }
     };
 
+    const doesNextPageExist = (currentPG, maxPG) => {
+        if (currentPG !== maxPG) {
+            return true
+        } else{
+            return false
+        }
+    }
+
+
     const getTranslation = (verse) => {
 
         // check possible null entry
@@ -394,19 +403,27 @@ const SurahComponent = ({ lang, ver, tr, translit, textSize, screen_height }) =>
                                     <View className="flex items-center justify-center mx-10 border-t-2 border-black pb-52">
                                         <View className="flex-row items-center space-x-2 mt-4">
 
-                                            <View className="right-4 rounded-md bg-red-400 p-2">
-                                                <Pressable onPress={() => previousPageInChapter(chapterID, chapterContent.pagination.current_page)}>
+                                            {chapterContent.pagination.current_page > 1 && (
+                                               <View className="right-4 rounded-md bg-red-400 p-2">
+                                                    <Pressable onPress={() => previousPageInChapter(chapterID, chapterContent.pagination.current_page)}>
                                                     <Text className="text-white font-semibold">Prev Page</Text>
-                                                </Pressable>
-                                            </View>
+                                                    </Pressable>
+                                                </View> 
+                                            )}
+                                            
 
                                             <Text className="font-medium text-xl">{chapterContent.pagination.current_page} out of {chapterContent.pagination.total_pages}</Text>
 
-                                            <View className="left-4 rounded-md bg-lime-500 p-2">
-                                                <Pressable onPress={() => nextPageInChapter(chapterID, chapterContent.pagination.current_page, chapterContent.pagination.total_pages)}>
-                                                    <Text className=" text-gray-50 font-semibold">Next Page</Text>
-                                                </Pressable>
-                                            </View>
+                                            { doesNextPageExist(chapterContent.pagination.current_page, chapterContent.pagination.total_pages) === true && (
+                                                
+                                                <View className="left-4 rounded-md bg-lime-500 p-2">
+                                                    <Pressable onPress={() => nextPageInChapter(chapterID, chapterContent.pagination.current_page, chapterContent.pagination.total_pages)}>
+                                                        <Text className=" text-gray-50 font-semibold">Next Page</Text>
+                                                    </Pressable>
+                                                </View>
+
+                                            )}
+                                            
 
 
                                         </View>
