@@ -1,16 +1,11 @@
 import React, { useState, useEffect } from 'react'
-import { View, Text, SafeAreaView, ScrollView, Pressable, Modal, Image, ActivityIndicator, useWindowDimensions } from 'react-native'
+import { View, Text, SafeAreaView, ScrollView, Pressable, Modal, Image, ActivityIndicator } from 'react-native'
 import { fetchChapterInfo, fetchChapterList, fetchChapterX, fetchChapterXpage } from '../../api/quranAPI'
-import HTML from 'react-native-render-html';
 import { theme } from '../../theme/index'
 import Icon from 'react-native-vector-icons/Feather';
+import InfoBottomSheet from './InfoBottomSheet';
 
-import Animated, { interpolate, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
-import { GestureHandlerRootView, GestureDetector, Gesture } from 'react-native-gesture-handler';
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faX, faCircle } from '@fortawesome/free-solid-svg-icons'
-
-const SurahComponent = ({ lang, ver, tr, translit, textSize, screen_height }) => {
+const SurahComponent = ({ lang, ver, tr, translit, textSize }) => {
 
     const [list, setList] = useState(null);
     const [chapterContent, setChapterContent] = useState(null);
@@ -20,7 +15,7 @@ const SurahComponent = ({ lang, ver, tr, translit, textSize, screen_height }) =>
 
     const [isInfoVisible, setInfoVisible] = useState(false);
     const [chapterInfo, setChapterInfo] = useState(null);
-    const [scrollY, setScrollY] = useState(0);
+    
 
 
 
@@ -171,122 +166,6 @@ const SurahComponent = ({ lang, ver, tr, translit, textSize, screen_height }) =>
 
     }
 
-
-    // styles && width for HTMl parser && animation handlers
-    const styleForHTML = {
-        h1: { fontWeight: 'bold' },
-        li: { padding: 10 },
-        ol: { padding: 10 }
-    };
-
-    // see forked implementation: [https://youtube.com/watch?v=KvRqsRwpwhY&t=736s&ab_channel=Reactiive]
-    const screen_width = useWindowDimensions().width;
-    const initial_Y = 0.6 * screen_height; // for 40% screen height 
-    const translateY = useSharedValue(initial_Y);
-    const context = useSharedValue({ y: 0 });
-    //// console.log('screen height type:', typeof initial_Y)
-
-    const gesture = Gesture.Pan()
-        .onStart(() => {
-            context.value = { y: translateY.value }; // ans = 0.6 * s_h
-            //// console.log('onStart context value:', context.value);
-        })
-        .onUpdate((e) => {
-            //// console.log('onUpdate arg:', e);
-
-            translateY.value = e.translationY + context.value.y;
-            //// console.log('onUpdate value:', translateY.value);
-
-            // since height is negative value
-            translateY.value = Math.max(
-                0, Math.min(translateY.value, screen_height));
-            //// console.log(`onUpdate value max(${translateY.value})`);
-        });
-
-    useEffect(() => {
-        translateY.value = withTiming(initial_Y);
-    }, [])
-
-
-    const rBottomSheetStyle = useAnimatedStyle(() => {
-        return {
-            transform: [{ translateY: translateY.value }]
-        }
-    })
-
-    const resetTranslateY = () => {
-        translateY.value = initial_Y
-    }
-
-
-
-
-    // custom component popup
-    const InfoBottomSheet = ({ isVisible, onClose, data }) => {
-        if (!data) return null;
-
-        return (
-            <Modal
-                animationType="slide"
-                transparent={true}
-                visible={isVisible}
-                onRequestClose={onClose}
-
-            >
-
-                <GestureHandlerRootView className='flex-1'>
-                    <View className='justify-end flex-1' style={{ backgroundColor: theme.bgGray(0.3) }} >
-
-                        <GestureDetector gesture={gesture}>
-                            <Animated.View className="bg-white p-5 rounded-tr-3xl rounded-tl-3xl"
-                                style={[
-                                    { position: "absolute", minHeight: String(screen_height * 0.5) }, // Ensure minimum height for bottom part
-                                    rBottomSheetStyle,
-                                ]}
-                            >
-                                <View className='h-1 w-20 bg-gray-500 mb-7 self-center rounded-[2px]' />
-
-                                {/* circle close button */}
-                                <View className='-mt-8 items-end mb-4'>
-                                    <Pressable onPress={onClose} className='w-8 h-8 rounded-full bg-gray-300 justify-center items-center'>
-                                        <FontAwesomeIcon icon={faX} color='black' size={18} className='font-bold' />
-                                    </Pressable>
-                                </View>
-
-                                <ScrollView>
-                                    <View className='mb-5'>
-                                        {/* Introductory Information about said Chapter */}
-                                        <Text className='font-bold text-sm mb-[10px]'>
-                                            {data.chapter_info.short_text}
-
-                                        </Text>
-
-                                        {/* Content provided by source regarding the Chapter ~ parsed from HTML */}
-                                        <HTML source={{ html: data.chapter_info.text }} tagsStyles={styleForHTML} contentWidth={screen_width} />
-
-
-                                        {/* Source providing the chapter information */}
-                                        <Text className='text-center text-lg mb-[10px] mt-[20px]'>
-                                            <Text className='font-bold'>Provided by</Text>
-                                            <Text>: {data.chapter_info.source}</Text>
-                                        </Text>
-
-                                        {/* className='italic text-center text-gray-600' */}
-                                        <Text className='italic text-center text-xs text-gray-500'>note: chapter information are not based on translation the selected</Text>
-                                    </View>
-                                </ScrollView>
-                                <Pressable onPress={onClose} style={{ marginTop: 20, padding: 10, backgroundColor: '#ddd', borderRadius: 5 }}>
-                                    <Text style={{ textAlign: 'center' }}>Close</Text>
-                                </Pressable>
-                            </Animated.View>
-                        </GestureDetector>
-
-                    </View>
-                </GestureHandlerRootView>
-
-            </Modal >
-        );
-    };
 
 
     // surahComponent
@@ -439,12 +318,14 @@ const SurahComponent = ({ lang, ver, tr, translit, textSize, screen_height }) =>
                 </View>
 
                 {/* custom component loads info on Chapter ~ located in a modal*/}
-                <InfoBottomSheet
-                    isVisible={isInfoVisible}
-                    onClose={() => { resetTranslateY(), setInfoVisible(false) }}
-                    data={chapterInfo}
-                />
-
+                { isInfoVisible && (
+                    <InfoBottomSheet
+                        isVisible={isInfoVisible}
+                        onClose={() => { setInfoVisible(false) }}
+                        data={chapterInfo}
+                    />
+                )}
+                
             </Modal>
 
         </View>

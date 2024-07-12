@@ -9,7 +9,6 @@ import { SurahComponent } from './components/SurahComponent';
 
 export default function ChapterScreen() {
 
-    const SCREEN_HEIGHT = useWindowDimensions().height;
     const { settings } = useContext(SettingsContext)
 
     const listType = [
@@ -96,7 +95,6 @@ export default function ChapterScreen() {
                                     tr={settings.Language.translation}
                                     translit={settings.Language.transliteration}
                                     textSize={settings.System.textSize}
-                                    screen_height={SCREEN_HEIGHT}
                                 />
                             )}
 
