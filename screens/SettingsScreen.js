@@ -109,7 +109,7 @@ export default function SettingsScreen() {
 
 
     return (
-        <SafeAreaView style={{ flex: 1 }}>
+        <SafeAreaView style={{ flex: 1, backgroundColor: '#E2E8F0' }}>
             <StatusBar style="dark" />
             <View style={{ flex: 1, padding: 16 }}>
                 <View style={{ backgroundColor: '#E2E8F0', borderRadius: 8, padding: 16, flex: 1 }}>

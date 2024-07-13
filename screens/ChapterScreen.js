@@ -7,6 +7,14 @@ import { Select } from '@mobile-reality/react-native-select-pro';
 import { JuzComponent } from './components/JuzComponent'
 import { SurahComponent } from './components/SurahComponent';
 
+// instead of implementing the designs made in figma via a wrapper we going to use a terneary 
+// to say if true then use value one if note use value two 
+// this will be something like Settings.system.darkMode
+// e.g,. className='{Settings.system.darkMode ? 'bg-slate-600/90' : 'bg-slate-200' }'77
+
+// then maybe apply a transition to leike this, go this suggesstion via AI :)
+// className={`transition-all duration-300 ease-in-out ${darkMode ? 'bg-slate-600/90' : 'bg-slate-200'}
+
 export default function ChapterScreen() {
 
     const { settings } = useContext(SettingsContext)
