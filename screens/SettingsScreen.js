@@ -109,15 +109,15 @@ export default function SettingsScreen() {
 
 
     return (
-        <SafeAreaView style={{ flex: 1, backgroundColor: '#E2E8F0' }}>
+        <SafeAreaView style={{ flex: 1 }} className={`${settings.System.darkMode ? 'bg-slate-600/90' : 'bg-slate-200'}`}>
             <StatusBar style="dark" />
             <View style={{ flex: 1, padding: 16 }}>
-                <View style={{ backgroundColor: '#E2E8F0', borderRadius: 8, padding: 16, flex: 1 }}>
-                    <Text style={{ fontWeight: 'bold', fontSize: 24, marginBottom: 16 }}>Settings</Text>
+                <View style={{ borderRadius: 8, padding: 16, flex: 1 }} className={`${settings.System.darkMode ? 'bg-slate-600/90' : 'bg-slate-200'}`}>
+                    <Text style={{ fontWeight: 'bold', fontSize: 24, marginBottom: 16 }} className={`${settings.System.darkMode ? 'text-white' : 'text-black'}`}>Settings</Text>
                     <ScrollView style={{ flex: 1 }}>
                         {Object.entries(settings).map(([sectionName, sectionSettings]) => (
                             <View key={sectionName} style={{ marginBottom: 16 }}>
-                                <View style={{ backgroundColor: '#A0AEC0', borderRadius: 8, padding: 8 }}>
+                                <View style={{ borderRadius: 8, padding: 8 }} className={`${settings.System.darkMode ? 'bg-slate-800' : 'bg-customLightBlue'}`}>
                                     <Text style={{ fontWeight: 'bold', fontSize: 18, color: 'white' }}>{sectionName}</Text>
                                 </View>
                                 {Object.entries(sectionSettings).map(([key, value]) => (
