@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { View, Text, SafeAreaView, ScrollView, Pressable, Modal, Image, ActivityIndicator } from 'react-native'
 import { fetchChapterInfo, fetchChapterList, fetchChapterX, fetchChapterXpage } from '../../api/quranAPI'
 import { theme } from '../../theme/index'
 import Icon from 'react-native-vector-icons/Feather';
 import InfoBottomSheet from './InfoBottomSheet';
+import { SettingsContext } from '../../SettingsContext';
 
 const SurahComponent = ({ lang, ver, tr, translit, textSize }) => {
 
@@ -15,7 +16,9 @@ const SurahComponent = ({ lang, ver, tr, translit, textSize }) => {
 
     const [isInfoVisible, setInfoVisible] = useState(false);
     const [chapterInfo, setChapterInfo] = useState(null);
-    
+
+    const { settings } = useContext(SettingsContext)
+
 
 
 
@@ -80,7 +83,7 @@ const SurahComponent = ({ lang, ver, tr, translit, textSize }) => {
     const doesNextPageExist = (currentPG, maxPG) => {
         if (currentPG !== maxPG) {
             return true
-        } else{
+        } else {
             return false
         }
     }
@@ -181,7 +184,7 @@ const SurahComponent = ({ lang, ver, tr, translit, textSize }) => {
                         return (
                             <View className="p-1 rounded-md">
                                 <Pressable onPress={() => { loadChapter(chapterId, chapterName); setChapterID(chapterId) }}>
-                                    <View className="p-4 flex-row items-center rounded-xl" style={{ backgroundColor: theme.bgWhite(0.6) }}>
+                                    <View className={`p-4 flex-row items-center rounded-xl ${settings.System.darkMode ? 'bg-green-100/90' : 'bg-white/60'}`}>
                                         <Text className="items-center">{chapterId}</Text>
                                         <Text className="ml-4 font-semibold text-lg">{chapterName}</Text>
                                     </View>
@@ -283,18 +286,18 @@ const SurahComponent = ({ lang, ver, tr, translit, textSize }) => {
                                         <View className="flex-row items-center space-x-2 mt-4">
 
                                             {chapterContent.pagination.current_page > 1 && (
-                                               <View className="right-4 rounded-md bg-red-400 p-2">
+                                                <View className="right-4 rounded-md bg-red-400 p-2">
                                                     <Pressable onPress={() => previousPageInChapter(chapterID, chapterContent.pagination.current_page)}>
-                                                    <Text className="text-white font-semibold">Prev Page</Text>
+                                                        <Text className="text-white font-semibold">Prev Page</Text>
                                                     </Pressable>
-                                                </View> 
+                                                </View>
                                             )}
-                                            
+
 
                                             <Text className="font-medium text-xl">{chapterContent.pagination.current_page} out of {chapterContent.pagination.total_pages}</Text>
 
-                                            { doesNextPageExist(chapterContent.pagination.current_page, chapterContent.pagination.total_pages) === true && (
-                                                
+                                            {doesNextPageExist(chapterContent.pagination.current_page, chapterContent.pagination.total_pages) === true && (
+
                                                 <View className="left-4 rounded-md bg-lime-500 p-2">
                                                     <Pressable onPress={() => nextPageInChapter(chapterID, chapterContent.pagination.current_page, chapterContent.pagination.total_pages)}>
                                                         <Text className=" text-gray-50 font-semibold">Next Page</Text>
@@ -302,7 +305,7 @@ const SurahComponent = ({ lang, ver, tr, translit, textSize }) => {
                                                 </View>
 
                                             )}
-                                            
+
 
 
                                         </View>
@@ -318,14 +321,14 @@ const SurahComponent = ({ lang, ver, tr, translit, textSize }) => {
                 </View>
 
                 {/* custom component loads info on Chapter ~ located in a modal*/}
-                { isInfoVisible && (
+                {isInfoVisible && (
                     <InfoBottomSheet
                         isVisible={isInfoVisible}
                         onClose={() => { setInfoVisible(false) }}
                         data={chapterInfo}
                     />
                 )}
-                
+
             </Modal>
 
         </View>

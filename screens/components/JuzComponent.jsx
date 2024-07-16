@@ -106,9 +106,9 @@ const JuzComponent = ({ lang, ver, tr, translit, textSize }) => {
           {juzList && juzList.map((juz, i) => {
             //// console.log(juz.juz_number)
             return (
-              <View key={i} className="p-1 rounded-md ">
+              <View key={i} className={`p-1 rounded-md`}>
                 <Pressable onPress={() => { loadJuzX(juz.juz_number); {/* passing juz as num to juz/${juz_num} */ } setChoosenJuzName(juz.juz_name); setChoosenJuzNum(juz.juz_number); }}>
-                  <View className="p-4 flex-row items-center rounded-xl" style={{ backgroundColor: theme.bgWhite(0.6) }}>
+                  <View className={`p-4 flex-row items-center rounded-xl ${settings.System.darkMode ? 'bg-green-100/90' : 'bg-white/60'}`}>
                     <Text className="items-center">{juz.juz_number}</Text>
                     <Text className="ml-4 font-semibold text-lg">Juz {juz.juz_name}</Text>
                   </View>

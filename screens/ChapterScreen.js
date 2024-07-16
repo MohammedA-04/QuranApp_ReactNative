@@ -38,11 +38,12 @@ export default function ChapterScreen() {
     const dropdownWidth = windowWidth * 0.9; // 80% of window width
 
     return (
-        <View className="flex-1 bg-green-200 mx-0 my-0">
+        <View className={`flex-1 ${settings.System.darkMode ? 'bg-green-900/75' : 'bg-green-200'} mx-0 my-0`}>
             <SafeAreaView>
                 <View className="mx-2 my-2">
 
-                    <View className="p-4 rounded-lg items-center justify-center flex-row" style={{ backgroundColor: theme.bgWhite(0.6) }}>
+                    {/* View for Section Header: title && dropdown */}
+                    <View className={`p-4 rounded-lg items-center justify-center flex-row bg-white/60`}>
                         <Text>
                             <Text className="font-semibold text-lg">{settedList ? settedList : 'Chapters'}  </Text>
                             <Text className="text-xl">|</Text>
