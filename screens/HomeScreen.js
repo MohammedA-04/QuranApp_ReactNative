@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
-import { SafeAreaView, ScrollView, Text, TouchableOpacity, View, ActivityIndicator } from "react-native";
+import { SafeAreaView, ScrollView, Text, TouchableOpacity, View, ActivityIndicator, Image } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { fetchAyahByKey, fetchChapterList, fetchRandomAyah } from "../api/quranAPI"; // Ensure the path is correct
 import { theme } from '../theme/index'; // Ensure the path is correct
@@ -107,15 +107,28 @@ export default function HomeScreen() {
     }, [])
 
     return (
-        <View className="flex-1">
+        <View className={`flex-1 ${settings.System.darkMode ? ' bg-gray-700' : 'bg-white'}`}>
             <StatusBar style="dark" />
             <SafeAreaView className="flex-1 justify-end">
 
-                <View className="items-center p-4 rounded-lg mx-4 my-4 bg-gray-500" >
-                    <TouchableOpacity onPress={handleGetRandomAyah}>
-                        <Text className="text-2xl text-white font-semibold">Get Random Ayah</Text>
-                    </TouchableOpacity>
+                {/* simple Quran logo and ayah button */}
+                <View className='flex-row ml-4 mr-4 my-2 '>
+
+                    <View>
+                        <Image source={require('../assets/SimpleQuranLogo.png')} className='h-[70] w-[150px] p-2' resizeMode="stretch" />
+                    </View>
+
+                    <View className={`ml-2 p-2 items-center rounded-lg justify-center ${settings.System.darkMode ? 'bg-white' : 'bg-gray-500'}`} >
+                        <TouchableOpacity onPress={handleGetRandomAyah}>
+                            <Text className={`text-2xl text-white font-semibold ${settings.System.darkMode ? 'text-black' : 'text-white'}`}
+
+                            >Get Random Ayah</Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
+
+
+
 
                 {!effect ? (
                     <View className="flex-1 items-center justify-center">
@@ -124,36 +137,41 @@ export default function HomeScreen() {
                 ) : null}
 
                 {clicked && randomAyah && chapter && (
-                    <View className="flex-1" style={{ marginHorizontal: 8 }}>
-
-                        <View className="border-black border-2 items-center p-2 rounded-lg mx-2 my-2">
-
-                            <View className="flex-row items-center">
-                                <Text className="text-2xl font-semibold">{chapter}  | </Text>
-                                <View className="flex-row m-4">
-                                    <Text>Juz: {randomAyah.juz_number} </Text>
-                                    <Text>Pg no: {randomAyah.page_number} </Text>
-                                    <Text>Id: {randomAyah.id} </Text>
-                                </View>
-                            </View>
+                    <View className={`flex-1 ${settings.System.darkMode ? 'bg-gray-700' : 'bg-white'}`} style={{ marginHorizontal: 8 }}>
 
 
-                        </View>
 
                         {/* ayah container */}
-                        <View className="flex-1 border-black p-4 items-center rounded-lg border-2 mb-12" style={{ marginHorizontal: 8, marginVertical: 8 }}>
+                        <View className={`flex-1 p-4 items-center rounded-lg border-2 mb-12 ${settings.System.darkMode ? 'border-white' : 'border-black'}`} style={{ marginHorizontal: 8, marginVertical: 8 }}>
                             <ScrollView
                                 className="flex-1 "
                                 contentContainerStyle={{ flexGrow: 0.8 }}
                                 indicatorStyle="black"
                                 showsVerticalScrollIndicator={true}
                             >
-                                <Text className=" text-3xl font-light" style={{ lineHeight: 50 }}>{randomAyah.text_uthmani}</Text>
+
+                                {/* ayah metadata: title, pgno etc */}
+                                <View className={`flex-row items-center`}>
+                                    <Text className={`text-2xl font-semibold ${settings.System.darkMode ? 'text-white' : 'text-black'}`}>{chapter}  </Text>
+                                    <View className="border-l-2 border-black border-spacing-2 p-1 m-2">
+                                        <Text className={`font-xl font-semibold ${settings.System.darkMode ? 'text-white' : 'text-black'}`}>Verse x Chapter: {randomAyah.verse_key} </Text>
+                                        <Text className={` font-xl font-semibold ${settings.System.darkMode ? 'text-white' : 'text-black'}`}>Page Number: {randomAyah.page_number} </Text>
+                                        <Text className={` font-xl font-semibold ${settings.System.darkMode ? 'text-white' : 'text-black'}`}>Juz : {randomAyah.juz_number} </Text>
+                                    </View>
+                                </View>
 
                                 {/* Straight  Line */}
-                                <View style={{ borderBottomWidth: 1, borderColor: 'black', marginRight: 8, marginBottom: 20, marginTop: 20 }} />
+                                <View style={{ borderBottomWidth: 1, marginRight: 8, marginBottom: 20, marginTop: 20 }}
+                                    className={`${settings.System.darkMode ? 'border-white' : 'border-black'}`} />
 
-                                <Text className=" text-lg font-normal">{translationText}</Text>
+                                <Text className={`text-3xl font-light ${settings.System.darkMode ? 'text-white' : 'text-black'}`}
+                                    style={{ lineHeight: 50 }}>{randomAyah.text_uthmani}</Text>
+
+                                {/* Straight  Line */}
+                                <View style={{ borderBottomWidth: 1, marginRight: 8, marginBottom: 20, marginTop: 20 }}
+                                    className={`${settings.System.darkMode ? 'border-white' : 'border-black'}`} />
+
+                                <Text className={`${settings.System.darkMode ? 'text-white' : 'text-black'} text-lg font-normal`}>{translationText}</Text>
 
                             </ScrollView>
                         </View>
