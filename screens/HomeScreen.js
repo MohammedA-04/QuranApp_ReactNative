@@ -153,10 +153,10 @@ export default function HomeScreen() {
                                 {/* ayah metadata: title, pgno etc */}
                                 <View className={`flex-row items-center`}>
                                     <Text className={`text-2xl font-semibold ${settings.System.darkMode ? 'text-white' : 'text-black'}`}>{chapter}  </Text>
-                                    <View className="border-l-2 border-black border-spacing-2 p-1 m-2">
-                                        <Text className={`font-xl font-semibold ${settings.System.darkMode ? 'text-white' : 'text-black'}`}>Verse x Chapter: {randomAyah.verse_key} </Text>
-                                        <Text className={` font-xl font-semibold ${settings.System.darkMode ? 'text-white' : 'text-black'}`}>Page Number: {randomAyah.page_number} </Text>
-                                        <Text className={` font-xl font-semibold ${settings.System.darkMode ? 'text-white' : 'text-black'}`}>Juz : {randomAyah.juz_number} </Text>
+                                    <View className={`border-l-2  border-spacing-2 p-1 m-2 ${settings.System.darkMode ? 'border-white' : 'border-black'} `}>
+                                        <Text className={`font-xl font-semibold ml-2 ${settings.System.darkMode ? 'text-white' : 'text-black'}`}>Verse x Chapter: {randomAyah.verse_key} </Text>
+                                        <Text className={` font-xl font-semibold ml-2 ${settings.System.darkMode ? 'text-white' : 'text-black'}`}>Page Number: {randomAyah.page_number} </Text>
+                                        <Text className={` font-xl font-semibold ml-2 ${settings.System.darkMode ? 'text-white' : 'text-black'}`}>Juz : {randomAyah.juz_number} </Text>
                                     </View>
                                 </View>
 
