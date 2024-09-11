@@ -111,21 +111,25 @@ export default function HomeScreen() {
             <StatusBar style="dark" />
             <SafeAreaView className="flex-1 justify-end">
 
-                {/* simple Quran logo and ayah button */}
-                <View className='flex-row ml-4 mr-4 my-2 '>
+                {/* simple Quran logo [legacy] and ayah button */}
+                {/*<View className='flex-row ml-4 mr-4 my-2 '>*/}
 
-                    <View>
+                    
+                    {/*<View>
                         <Image source={require('../assets/SimpleQuranLogo.png')} className='h-[70] w-[150px] p-2' resizeMode="stretch" />
                     </View>
+                    
+                    <View className={`ml-2 p-2 items-center rounded-lg justify-center ${settings.System.darkMode ? 'bg-slate-900' : 'bg-gray-400/80'}`} >
+                    */}
 
-                    <View className={`ml-2 p-2 items-center rounded-lg justify-center ${settings.System.darkMode ? 'bg-white' : 'bg-gray-500'}`} >
+                    <View className={`mt-2 mb-1 mx-3 p-3 items-center rounded-lg justify-center ${settings.System.darkMode ? 'bg-slate-900' : 'bg-gray-400/80'}`} >
                         <TouchableOpacity onPress={handleGetRandomAyah}>
-                            <Text className={`text-2xl text-white font-semibold ${settings.System.darkMode ? 'text-black' : 'text-white'}`}
-
-                            >Get Random Ayah</Text>
+                            <Text className={`text-2xl text-white font-semibold ${settings.System.darkMode ? 'text-white' : 'text-white'}`}>
+                                Get Random Ayah
+                            </Text>
                         </TouchableOpacity>
                     </View>
-                </View>
+                {/*</View>*/}
 
 
 
