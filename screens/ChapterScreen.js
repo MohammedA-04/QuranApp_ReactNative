@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState, useCallback } from 'react'
 import { View, Text, SafeAreaView, ScrollView, Pressable, ActivityIndicator, Modal, Image, useWindowDimensions, Dimensions } from 'react-native'
 
 import { SettingsContext } from '../SettingsContext';
@@ -18,21 +18,34 @@ import { SurahComponent } from './components/SurahComponent';
 export default function ChapterScreen() {
 
     const { settings } = useContext(SettingsContext)
-
+     
     const listType = [
         { label: 'Chapters', value: 'Chapters' },
         { label: 'Juz', value: 'Juz' }
     ];
 
     // by default: we want chapters
-    const [settedList, setListType] = useState(listType[0].value)
+    const [settedList, setListType] = useState(listType[0].value);
 
     // function: to change list type
-    const handleListChange = (value) => {
-        if (value) {
-            setListType(value || listType[0].value);
-        }
+    const handleListChange = (value) => {  
+        // sets to chapters if null/crossed out
+        setListType(value === null ? listType[0].value : value)
     }
+
+    // Re-render based on {settedList, settings}
+    const renderContent = useCallback(() => {
+        const ContentComponent = settedList === 'Juz' ? JuzComponent : SurahComponent;
+        return (
+            <ContentComponent
+                lang={settings.Language.language}
+                ver={settings.Language.version}
+                tr={settings.Language.translation}
+                translit={settings.Language.transliteration}
+                textSize={settings.System.textSize}
+            />
+        );
+    }, [settedList, settings]);
 
     const windowWidth = Dimensions.get('window').width;
     const dropdownWidth = windowWidth * 0.9; // 80% of window width
@@ -40,12 +53,14 @@ export default function ChapterScreen() {
     return (
         <View className={`flex-1 ${settings.System.darkMode ? 'bg-green-900/75' : 'bg-green-200'} mx-0 my-0`}>
             <SafeAreaView>
+
+                {/* Section Header */}
                 <View className="mx-2 my-2">
 
                     {/* View for Section Header: title && dropdown */}
                     <View className={`p-4 rounded-lg items-center justify-center flex-row bg-white/60`}>
                         <Text>
-                            <Text className="font-semibold text-lg">{settedList ? settedList : 'Chapters'}  </Text>
+                            <Text className="font-semibold text-lg">{settedList}  </Text>
                             <Text className="text-xl">|</Text>
                             {/*<Text className="font-semibold text-md text-gray-500">  Chapters</Text>*/}
                         </Text>
@@ -88,25 +103,7 @@ export default function ChapterScreen() {
                     <ScrollView vertical>
                         {/* map $list => chapter show: surah no and name */}
                         <View className="mt-3 pb-32">
-
-                            {settedList === 'Juz' ? (
-                                <JuzComponent
-                                    lang={settings.Language.language}
-                                    ver={settings.Language.version}
-                                    tr={settings.Language.translation}
-                                    translit={settings.Language.transliteration}
-                                    textSize={settings.System.textSize}
-                                />
-                            ) : (
-                                <SurahComponent
-                                    lang={settings.Language.language}
-                                    ver={settings.Language.version}
-                                    tr={settings.Language.translation}
-                                    translit={settings.Language.transliteration}
-                                    textSize={settings.System.textSize}
-                                />
-                            )}
-
+                            {renderContent()}
                         </View>
                     </ScrollView>
 

@@ -21,6 +21,8 @@ export default function AppNavigation() {
         navigation.navigate(page);
     };
 
+   
+
     return (
         <SettingsProvider>
             <SelectProvider>
